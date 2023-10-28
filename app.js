@@ -177,14 +177,15 @@ app.post("/api/add-goal", (req, res) => {
 });
 
 app.post("/api/add-action", (req, res) => {
+  var task_id = req.body.task_id;
   var action = req.body.action;
   var report = req.body.report;
   var xp = req.body.xp;
   var completes_task = req.body.completes_task;
   var completed_at = toLocaleISOString(new Date());
 
-  var sql = "INSERT INTO user_actions (action, report, xp, completes_task, completed_at) VALUES (?, ?, ?, ?, ?)";
-  con.query(sql, [action, report, xp, completes_task, completed_at], function(err, result) {
+  var sql = "INSERT INTO user_actions (task_id, action, report, xp, completes_task, completed_at) VALUES (?, ?, ?, ?, ?, ?)";
+  con.query(sql, [task_id, action, report, xp, completes_task, completed_at], function(err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: err.message});

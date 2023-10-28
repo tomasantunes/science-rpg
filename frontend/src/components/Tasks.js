@@ -19,14 +19,14 @@ export default function Tasks() {
     goal_id: null,
     description: "",
     type: "",
-    xp: 0
+    xp: ""
   });
   const [newAction, setNewAction] = useState({
     task_id: null,
     action: "",
     report: "",
-    completes_task: false,
-    completed_at: null,
+    xp: "",
+    completes_task: false
   });
 
   const taskTypes = [
@@ -90,6 +90,12 @@ export default function Tasks() {
   }
 
   function addAction(taskId) {
+    var task_to_add_action = tasks.find((task) => task.id == taskId);
+    setNewAction({
+      ...newAction,
+      task_id: task_to_add_action.id,
+      xp: task_to_add_action.xp
+    });
     $(".addActionModal").modal("show");    
   }
 
@@ -98,9 +104,11 @@ export default function Tasks() {
   }
 
   function submitAddAction(e) {
+    e.preventDefault();
     axios.post(config.BASE_URL + "/api/add-action", newAction)
     .then((response) => {
       loadTasks(selectedGoal.value);
+      alert("Action added.");
       closeAddAction();
     })
     .catch((err) => {
