@@ -44,6 +44,7 @@ export default function Tasks() {
               <tr>
                   <th>Task</th>
                   <th>Type</th>
+                  <th>Complete</th>
                   <th>Options</th>
               </tr>
           </thead>
@@ -52,6 +53,7 @@ export default function Tasks() {
               <tr>
                 <td>{task.description}</td>
                 <td>{task.type}</td>
+                <td></td>
                 <td></td>
               </tr>
             ))}
