@@ -32,10 +32,6 @@ export default function Home() {
                 <label>Report</label>
                 <textarea className="form-control" rows="5"></textarea>
               </div>
-              <div className="form-group">
-                <label>XP</label>
-                <input type="text" className="form-control" />
-              </div>
               <div style={{textAlign: "right"}}>
                 <button className="btn btn-primary">Submit</button>
               </div>
