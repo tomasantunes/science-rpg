@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import Navbar from './Navbar';
 import $ from 'jquery';
+import config from '../config.json';
+import axios from 'axios';
 
 window.jQuery = $;
 window.$ = $;
@@ -15,7 +17,17 @@ export default function Stats() {
   const [nrItems, setNrItems] = useState(0);
 
   function loadStats() {
-
+    axios.get(config.BASE_URL + '/api/get-stats')
+    .then(function(response) {
+      setXp(response.data.data.xp);
+      setLevel(response.data.data.level);
+      setNrSkills(response.data.data.nr_skills);
+      setNrGoalsCompleted(response.data.data.nr_goals_completed);
+      setNrItems(response.data.data.nr_items);
+    })
+    .catch(function(error) {
+      console.log(error);
+    })
   }
 
   useEffect(() => {

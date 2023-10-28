@@ -254,6 +254,60 @@ app.post("/api/edit-item", (req, res) => {
   });
 });
 
+app.get("/api/get-stats", async (req, res) => {
+  var sql1 = "SELECT SUM(xp) AS xp FROM user_actions";
+  try {
+    var [rows1, fields1] = await con2.query(sql1);
+    var xp = rows1[0].xp;
+
+    var level = 1;
+    var level_xp = 0;
+    for (var i = 0; i <= 10000; i++) {
+      level_xp += i * 1000;
+      if (xp >= level_xp) {
+        level++;
+      }
+      else {
+        break;
+      }
+    }
+
+    var sql2 = "SELECT COUNT(*) AS nr_skills FROM skills WHERE skill_percentage = 100";
+    var [rows2, fields2] = await con2.query(sql2);
+    var nr_skills = rows2[0].nr_skills;
+
+    var sql3 = `
+      SELECT COUNT(*) AS nr_goals_completed
+      FROM goals
+      INNER JOIN tasks ON goals.id = tasks.goal_id
+      INNER JOIN user_actions ON tasks.id = user_actions.task_id
+      WHERE (SELECT COUNT(*) FROM tasks WHERE goal_id = goals.id) = (SELECT COUNT(*) FROM user_actions WHERE task_id = tasks.id AND completes_task = 1)
+    `;
+    var [rows3, fields3] = await con2.query(sql3);
+    var nr_goals_completed = rows3[0].nr_goals_completed;
+
+    var sql4 = "SELECT SUM(qtt) AS nr_items FROM inventory";
+    var [rows4, fields4] = await con2.query(sql4);
+    var nr_items = rows4[0].nr_items;
+
+    var data = {
+      xp: xp,
+      level: level,
+      nr_skills: nr_skills,
+      nr_goals_completed: nr_goals_completed,
+      nr_items: nr_items
+    }
+
+    console.log(data);
+  
+    res.json({status: "OK", data: data});
+  }
+  catch(err) {
+    console.log(err);
+    res.json({status: "NOK", error: err.message});
+  }
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
