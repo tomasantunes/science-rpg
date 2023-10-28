@@ -15,10 +15,10 @@ export default function Navbar() {
                 <NavLink to="/home" className="nav-link">Home</NavLink>
               </li>
               <li class="nav-item">
-                <NavLink to="/tasks" className="nav-link">Tasks</NavLink>
+                <NavLink to="/goals" className="nav-link">Goals</NavLink>
               </li>
               <li class="nav-item">
-                <NavLink to="/task-items" className="nav-link">Task Items</NavLink>
+                <NavLink to="/tasks" className="nav-link">Tasks</NavLink>
               </li>
               <li class="nav-item">
                 <NavLink to="/actions" className="nav-link">Actions</NavLink>
