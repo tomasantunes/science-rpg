@@ -210,9 +210,10 @@ app.post("/api/add-skill", (req, res) => {
 app.post("/api/add-item", (req, res) => {
   var item_name = req.body.item_name;
   var description = req.body.description;
+  var qtt = req.body.qtt;
 
-  var sql = "INSERT INTO inventory (item_name, description) VALUES (?, ?)";
-  con.query(sql, [item_name, description], function(err, result) {
+  var sql = "INSERT INTO inventory (item_name, description, qtt) VALUES (?, ?, ?)";
+  con.query(sql, [item_name, description, qtt], function(err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: err.message})
@@ -233,6 +234,22 @@ app.post("/api/edit-skill", (req, res) => {
       res.json({status: "NOK", error: err.message})
     }
     res.json({status: "OK", data: "Skill edited"});
+  });
+});
+
+app.post("/api/edit-item", (req, res) => {
+  var id = req.body.id;
+  var item_name = req.body.item_name;
+  var description = req.body.description;
+  var qtt = req.body.qtt;
+
+  var sql = "UPDATE inventory SET item_name = ?, description = ?, qtt = ? WHERE id = ?";
+  con.query(sql, [item_name, description, qtt, id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message})
+    }
+    res.json({status: "OK", data: "Item edited"});
   });
 });
 

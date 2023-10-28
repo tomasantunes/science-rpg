@@ -48,6 +48,8 @@ export default function Skills() {
   }
 
   function showEditSkill(id) {
+    var skill_to_edit = skills.find((skill) => skill.id == id);
+    setEditSkill(skill_to_edit);
     $(".editSkillModal").modal("show");
   }
 
@@ -138,7 +140,7 @@ export default function Skills() {
             <div class="modal-body">
               <form onSubmit={submitEditSkill}>
                 <div className="form-group py-2">
-                  <label className="control-label">Edit Skill</label>
+                  <label className="control-label">Skill Name</label>
                   <div>
                       <input type="text" className="form-control input-lg" name="skill_name" value={editSkill.skill_name} onChange={changeEditSkillName}/>
                   </div>
