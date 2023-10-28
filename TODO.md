@@ -1,7 +1,5 @@
 # TODO
 
-- Create database
-- Create secret config file
 - Setup database connection
 - Create route for adding a goal
 - Create a route for listing goals
