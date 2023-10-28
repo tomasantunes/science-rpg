@@ -1,5 +1,11 @@
 import React from 'react';
 import {NavLink} from 'react-router-dom';
+import $ from 'jquery';
+
+window.jQuery = $;
+window.$ = $;
+global.jQuery = $;
+window.bootstrap = require('bootstrap');
 
 export default function Navbar() {
   return (

@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import Navbar from './Navbar';
+import $ from 'jquery';
+
+window.jQuery = $;
+window.$ = $;
+global.jQuery = $;
+window.bootstrap = require('bootstrap');
 
 export default function Home() {
   const [quest, setQuest] = useState('');
