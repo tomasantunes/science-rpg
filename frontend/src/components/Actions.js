@@ -1,11 +1,31 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Navbar from './Navbar';
 
 export default function Actions() {
+  const [actions, setActions] = useState([]);
+
+  function loadActions() {
+
+  }
+
+  useEffect(() => {
+    loadActions();
+  }, []);
   return (
     <>
       <Navbar />
-      <div>Actions</div>
+      <div className="small-container">
+        <h2>Actions</h2>
+        <ul className="actions">
+          {actions.map((action) => (
+            <li>
+              <h4>{action.action}</h4>
+              <p>{action.report}</p>
+              <p><b>{action.xp} XP</b></p>
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   )
 }
