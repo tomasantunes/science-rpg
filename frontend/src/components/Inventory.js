@@ -1,7 +1,12 @@
-import React from 'react'
+import React from 'react';
+import Navbar from './Navbar';
 
 export default function Inventory() {
   return (
-    <div>Inventory</div>
+    <>
+      <Navbar />
+      <div>Inventory</div>
+    </>
+    
   )
 }

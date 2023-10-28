@@ -1,7 +1,11 @@
-import React from 'react'
+import React from 'react';
+import Navbar from './Navbar';
 
 export default function TaskItems() {
   return (
-    <div>TaskItems</div>
+    <>
+      <Navbar />
+      <div>TaskItems</div>
+    </>
   )
 }

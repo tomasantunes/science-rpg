@@ -1,7 +1,12 @@
-import React from 'react'
+import React from 'react';
+import Navbar from './Navbar';
 
 export default function Skills() {
   return (
-    <div>Skills</div>
+    <>
+      <Navbar />
+      <div>Skills</div>
+    </>
+   
   )
 }

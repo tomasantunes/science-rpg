@@ -1,7 +1,12 @@
-import React from 'react'
+import React from 'react';
+import Navbar from './Navbar';
 
 export default function Tasks() {
   return (
-    <div>Tasks</div>
+    <>
+      <Navbar />
+      <div>Tasks</div>
+    </>
+    
   )
 }
