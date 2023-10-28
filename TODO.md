@@ -1,14 +1,15 @@
 # TODO
 
-- Install react router dom
-- Create Navbar
-- Create page for posts with button that you press to get a new post.
-- After the post there is a form where you fill out the action and the report.
-- Then the bot gives you some additional comments.
-- Then the task item can be marked off.
-- Create a page for tasks
-- Create a page for task items
-- When you create a task item you define the XP it's worth, and if it's a one-off or not.
-- Create a page for skills
-- Create a page for the inventory.
-- Create a page for stats with your XPs and your current level, number of skills completed and number of items in inventory.
+- Add a modal on the tasks to submit an action for a task
+- Add an option to edit skill
+- Create route for adding a goal
+- Create a route for listing goals
+- Create a route for adding a task
+- Create a route for listing tasks
+- Create a route for adding an item
+- Create a route for listing items
+- Create a route to add action
+- Create a route to list actions
+- Create a route to add a skill
+- Create a route to list skills
+- Create a route to edit skill
