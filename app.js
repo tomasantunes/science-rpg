@@ -277,11 +277,14 @@ app.get("/api/get-stats", async (req, res) => {
     var nr_skills = rows2[0].nr_skills;
 
     var sql3 = `
-      SELECT COUNT(*) AS nr_goals_completed
-      FROM goals
-      INNER JOIN tasks ON goals.id = tasks.goal_id
-      INNER JOIN user_actions ON tasks.id = user_actions.task_id
-      WHERE (SELECT COUNT(*) FROM tasks WHERE goal_id = goals.id) = (SELECT COUNT(*) FROM user_actions WHERE task_id = tasks.id AND completes_task = 1)
+      WITH raw AS (
+        SELECT DISTINCT(goals.id)
+        FROM goals
+        INNER JOIN tasks ON goals.id = tasks.goal_id
+        INNER JOIN user_actions ON tasks.id = user_actions.task_id
+        WHERE (SELECT COUNT(*) FROM tasks WHERE goal_id = goals.id) = (SELECT COUNT(*) FROM user_actions WHERE task_id IN (SELECT id FROM tasks WHERE goal_id = goals.id) AND completes_task = 1)
+      )
+      SELECT COUNT(*) AS nr_goals_completed FROM raw
     `;
     var [rows3, fields3] = await con2.query(sql3);
     var nr_goals_completed = rows3[0].nr_goals_completed;
