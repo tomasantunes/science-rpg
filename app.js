@@ -72,6 +72,61 @@ else if (secretConfig.ENVIRONMENT == "UBUNTU") {
   });
 }
 
+app.get("/api/goals", (req, res) => {
+  var sql = "SELECT * FROM goals";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "OK", data: result});
+  });
+});
+
+app.get("/api/tasks", (req, res) => {
+  var sql = "SELECT * FROM tasks";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "NOK", data: result});
+  });
+});
+
+app.get("/api/actions", (req, res) => {
+  var sql = "SELECT * FROM actions";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "OK", data: result});
+  });
+});
+
+app.get("/api/inventory", (req, res) => {
+  var sql = "SELECT * FROM inventory";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "OK", data: result});
+  });  
+});
+
+app.get("/api/skills", (req, res) => {
+  var sql = "SELECT * FROM skills";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "OK", data: result});
+  });
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
