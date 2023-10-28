@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import Navbar from './Navbar';
 import $ from 'jquery';
+import config from '../config';
+import axios from 'axios';
 
 window.jQuery = $;
 window.$ = $;
@@ -9,13 +11,35 @@ window.bootstrap = require('bootstrap');
 
 export default function Goals() {
   const [goals, setGoals] = useState([]);
+  const [newGoal, setNewGoal] = useState({
+    description: ""
+  });
 
   function loadGoals() {
+    axios.get(config.BASE_URL + "/api/goals")
+    .then((response) => {
+      setGoals(response.data.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
 
+  function changeNewGoalDescription(e) {
+    setNewGoal({
+      ...newGoal,
+      description: e.target.value
+    });
   }
 
   function addGoal() {
-
+    axios.post(config.BASE_URL + "/api/add-goal", newGoal)
+    .then((response) => {
+      loadGoals();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   useEffect(() => {
@@ -44,7 +68,7 @@ export default function Goals() {
           <tfoot>
             <tr>
               <td>
-                <input type="text" className="form-control" placeholder="Add a new goal" />
+                <input type="text" className="form-control" value={newGoal.description} onChange={changeNewGoalDescription} placeholder="Add a new goal" />
               </td>
               <td>
                 <button className="btn btn-success" onClick={addGoal}>Add</button>

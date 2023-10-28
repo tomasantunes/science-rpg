@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import Navbar from './Navbar';
 import $ from 'jquery';
+import config from '../config';
+import axios from 'axios';
 
 window.jQuery = $;
 window.$ = $;
@@ -19,11 +21,30 @@ export default function Skills() {
   });
 
   function loadSkills() {
+    axios.get(config.BASE_URL + "/api/skills")
+    .then((response) => {
+      setSkills(response.data.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
 
+  function changeNewSkillName(e) {
+    setNewSkill({
+      ...newSkill,
+      skill_name: e.target.value
+    });
   }
 
   function addSkill() {
-
+    axios.post(config.BASE_URL + "/api/add-skill", newSkill)
+    .then((response) => {
+      loadSkills();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function showEditSkill(id) {
@@ -49,7 +70,15 @@ export default function Skills() {
   }
 
   function submitEditSkill(e) {
-
+    e.preventDefault();
+    axios.post(config.BASE_URL + "/api/edit-skill", editSkill)
+    .then((response) => {
+      loadSkills();
+      closeEditSkill();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   useEffect(() => {
@@ -72,7 +101,7 @@ export default function Skills() {
             {skills.map((skill) => (
               <tr>
                 <td>{skill.skill_name}</td>
-                <td>{skill.percentage}</td>
+                <td>{skill.skill_percentage}</td>
                 <td>
                   <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -89,7 +118,7 @@ export default function Skills() {
           <tfoot>
             <tr>
               <td>
-                <input type="text" className="form-control" placeholder="Add a new skill" />
+                <input type="text" className="form-control" value={newSkill.skill_name} onChange={changeNewSkillName} placeholder="Add a new skill" />
               </td>
               <td></td>
               <td>

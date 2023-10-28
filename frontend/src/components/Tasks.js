@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import Navbar from './Navbar';
 import Select from 'react-select';
 import $ from 'jquery';
+import config from '../config';
+import axios from 'axios';
 
 window.jQuery = $;
 window.$ = $;
@@ -13,6 +15,12 @@ export default function Tasks() {
   const [selectedGoal, setSelectedGoal] = useState();
   const [tasks, setTasks] = useState([]);
   const [selectedTaskType, setSelectedTaskType] = useState();
+  const [newTask, setNewTask] = useState({
+    goal_id: null,
+    description: "",
+    type: "",
+    xp: 0
+  });
   const [newAction, setNewAction] = useState({
     task_id: null,
     action: "",
@@ -27,19 +35,58 @@ export default function Tasks() {
   ];
 
   function changeSelectedGoal(goal) {
-
+    setSelectedGoal(goal);
+    setNewTask({
+      ...newTask,
+      goal_id: goal.value
+    });
+    loadTasks(goal.value);
   }
 
   function changeSelectedTaskType(taskType) {
+    setSelectedTaskType(taskType);
+    setNewTask({
+      ...newTask,
+      type: taskType.value
+    });
+  }
 
+  function changeNewTaskDescription(e) {
+    setNewTask({
+      ...newTask,
+      description: e.target.value
+    });
+  }
+
+  function changeNewTaskXp(e) {
+    setNewTask({
+      ...newTask,
+      xp: e.target.value
+    });
   }
 
   function loadGoals() {
-
+    axios.get(config.BASE_URL + "/api/goals")
+    .then((response) => {
+      var goals_arr = [];
+      for (var i in response.data.data) {
+        goals_arr.push({value: response.data.data[i].id, label: response.data.data[i].description});
+      }
+      setGoals(goals_arr);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function addTask() {
-
+    axios.post(config.BASE_URL + "/api/add-task", newTask)
+    .then((response) => {
+      loadTasks(selectedGoal.value);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function addAction(taskId) {
@@ -51,7 +98,14 @@ export default function Tasks() {
   }
 
   function submitAddAction(e) {
-
+    axios.post(config.BASE_URL + "/api/add-action", newAction)
+    .then((response) => {
+      loadTasks(selectedGoal.value);
+      closeAddAction();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function changeNewActionAction(e) {
@@ -72,6 +126,16 @@ export default function Tasks() {
     setNewAction({
       ...newAction,
       completes_task: e.target.checked
+    });
+  }
+
+  function loadTasks(goalId) {
+    axios.get(config.BASE_URL + "/api/tasks/" + goalId)
+    .then((response) => {
+      setTasks(response.data.data);
+    })
+    .catch((err) => {
+      console.log(err);
     });
   }
 
@@ -118,13 +182,13 @@ export default function Tasks() {
           <tfoot>
             <tr>
               <td>
-                <input type="text" className="form-control" placeholder="Add a new task" />
+                <input type="text" className="form-control" value={newTask.description} onChange={changeNewTaskDescription} placeholder="Add a new task" />
               </td>
               <td>
                 <Select options={taskTypes} value={selectedTaskType} onChange={changeSelectedTaskType} />
               </td>
               <td>
-                <input type="text" className="form-control" placeholder="Set the XP" />
+                <input type="text" className="form-control" value={newTask.xp} onChange={changeNewTaskXp} placeholder="Set the XP" />
               </td>
               <td></td>
               <td>

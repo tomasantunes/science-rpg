@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import Navbar from './Navbar';
 import $ from 'jquery';
+import config from '../config';
+import axios from 'axios';
 
 window.jQuery = $;
 window.$ = $;
@@ -11,7 +13,13 @@ export default function Actions() {
   const [actions, setActions] = useState([]);
 
   function loadActions() {
-
+    axios.get(config.BASE_URL + "/api/actions")
+    .then((response) => {
+      setActions(response.data.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   useEffect(() => {

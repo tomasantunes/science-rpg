@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import Navbar from './Navbar';
 import $ from 'jquery';
+import config from '../config';
+import axios from 'axios';
 
 window.jQuery = $;
 window.$ = $;
@@ -15,7 +17,13 @@ export default function Goals() {
   });
 
   function loadItems() {
-
+    axios.get(config.BASE_URL + "/api/inventory")
+    .then((response) => {
+      setItems(response.data.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function addItem() {
@@ -41,7 +49,15 @@ export default function Goals() {
   }
 
   function submitAddItem(e) {
-
+    e.preventDefault();
+    axios.post(config.BASE_URL + "/api/add-item", newItem)
+    .then((response) => {
+      loadItems();
+      closeAddItem();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   useEffect(() => {
