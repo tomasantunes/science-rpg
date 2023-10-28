@@ -7,3 +7,9 @@
     max-width: 750px;
     margin: 0 auto;
 }
+
+input[type=checkbox] {
+    width: 35px;
+    height: 35px;
+    vertical-align: middle;
+}

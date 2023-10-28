@@ -13,6 +13,13 @@ export default function Tasks() {
   const [selectedGoal, setSelectedGoal] = useState();
   const [tasks, setTasks] = useState([]);
   const [selectedTaskType, setSelectedTaskType] = useState();
+  const [newAction, setNewAction] = useState({
+    task_id: null,
+    action: "",
+    report: "",
+    completes_task: false,
+    completed_at: null,
+  });
 
   const taskTypes = [
     {value: "single", label: "Single"},
@@ -33,6 +40,39 @@ export default function Tasks() {
 
   function addTask() {
 
+  }
+
+  function addAction(taskId) {
+    $(".addActionModal").modal("show");    
+  }
+
+  function closeAddAction() {
+    $(".addActionModal").modal("hide");
+  }
+
+  function submitAddAction(e) {
+
+  }
+
+  function changeNewActionAction(e) {
+    setNewAction({
+      ...newAction,
+      action: e.target.value
+    });     
+  }
+
+  function changeNewActionReport(e) {
+    setNewAction({
+      ...newAction,
+      report: e.target.value
+    });
+  }
+
+  function changeNewActionCompletesTask(e) {
+    setNewAction({
+      ...newAction,
+      completes_task: e.target.checked
+    });
   }
 
   useEffect(() => {
@@ -62,7 +102,16 @@ export default function Tasks() {
                 <td>{task.type}</td>
                 <td>{task.xp}</td>
                 <td></td>
-                <td></td>
+                <td>
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      Options
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      <li><a class="dropdown-item" href="#" onClick={() => { addAction(task.id) }}>Edit</a></li>
+                    </ul>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -84,6 +133,43 @@ export default function Tasks() {
             </tr>
           </tfoot>
         </table>
+      </div>
+      <div class="modal addActionModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Action</h5>
+              <button type="button" class="btn-close" onClick={closeAddAction} aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form onSubmit={submitAddAction}>
+                <div className="form-group py-2">
+                  <label className="control-label">Action</label>
+                  <div>
+                      <input type="text" className="form-control input-lg" name="action" value={newAction.action} onChange={changeNewActionAction}/>
+                  </div>
+                </div>
+                <div className="form-group py-2">
+                  <label className="control-label">Report</label>
+                  <div>
+                      <textarea className="form-control input-lg" name="report" value={newAction.report} onChange={changeNewActionReport} />
+                  </div>
+                </div>
+                <div className="form-group py-2">
+                  <label className="control-label">Completes Task</label>
+                  <div>
+                      <input type="checkbox" name="completes_task" checked={newAction.completes_task} onChange={changeNewActionCompletesTask}/>
+                  </div>
+                </div>
+                <div className="form-group">
+                    <div style={{textAlign: "right"}}>
+                        <button type="submit" className="btn btn-primary">Add</button>
+                    </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   )

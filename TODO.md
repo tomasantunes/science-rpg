@@ -1,6 +1,5 @@
 # TODO
 
-- Add a modal on the tasks to submit an action for a task
 - Add an option to edit skill
 - Create database
 - Create secret config file

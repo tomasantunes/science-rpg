@@ -92,13 +92,13 @@ export default function Goals() {
                 <div className="form-group py-2">
                   <label className="control-label">Item Name</label>
                   <div>
-                      <input type="text" className="form-control input-lg" name="description" value={newItem.item_name} onChange={changeNewItemName}/>
+                      <input type="text" className="form-control input-lg" name="item_name" value={newItem.item_name} onChange={changeNewItemName}/>
                   </div>
                 </div>
                 <div className="form-group py-2">
                   <label className="control-label">Description</label>
                   <div>
-                      <textarea className="form-control input-lg" name="time" value={newItem.description} onChange={changeNewItemDescription} />
+                      <textarea className="form-control input-lg" name="description" value={newItem.description} onChange={changeNewItemDescription} />
                   </div>
                 </div>
                 <div className="form-group">
