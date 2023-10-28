@@ -1,6 +1,5 @@
 # TODO
 
-- Setup database connection
 - Create route for adding a goal
 - Create a route for listing goals
 - Create a route for adding a task
