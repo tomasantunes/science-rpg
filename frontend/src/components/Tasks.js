@@ -66,6 +66,7 @@ export default function Tasks() {
               <td>
                 <Select options={taskTypes} value={selectedTaskType} onChange={changeSelectedTaskType} />
               </td>
+              <td></td>
               <td>
                 <button className="btn btn-success" onClick={addTask}>Add</button>
               </td>
