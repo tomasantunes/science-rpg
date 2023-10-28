@@ -108,7 +108,7 @@ export default function Tasks() {
                       Options
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      <li><a class="dropdown-item" href="#" onClick={() => { addAction(task.id) }}>Edit</a></li>
+                      <li><a class="dropdown-item" href="#" onClick={() => { addAction(task.id) }}>Add Action</a></li>
                     </ul>
                   </div>
                 </td>

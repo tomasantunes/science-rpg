@@ -1,6 +1,5 @@
 # TODO
 
-- Add an option to edit skill
 - Create database
 - Create secret config file
 - Setup database connection
