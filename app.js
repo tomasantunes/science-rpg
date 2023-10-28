@@ -217,6 +217,21 @@ app.post("/api/add-item", (req, res) => {
   });
 });
 
+app.post("/api/edit-skill", (req, res) => {
+  var id = req.body.id;
+  var skill_name = req.body.skill_name;
+  var skill_percentage = req.body.skill_percentage;
+
+  var sql = "UPDATE skills SET skill_name = ?, skill_percentage = ? WHERE id = ?";
+  con.query(sql, [skill_name, skill_percentage, id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message})
+    }
+    res.json({status: "OK", data: "Skill edited"});
+  });
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
