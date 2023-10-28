@@ -72,6 +72,23 @@ else if (secretConfig.ENVIRONMENT == "UBUNTU") {
   });
 }
 
+function toLocaleISOString(date) {
+  function pad(number) {
+      if (number < 10) {
+          return '0' + number;
+      }
+      return number;
+  }
+
+  return date.getFullYear() +
+      '-' + pad(date.getMonth() + 1) +
+      '-' + pad(date.getDate()) +
+      'T' + pad(date.getHours()) +
+      ':' + pad(date.getMinutes()) +
+      ':' + pad(date.getSeconds()) ;
+
+}
+
 app.get("/api/goals", (req, res) => {
   var sql = "SELECT * FROM goals";
   con.query(sql, function(err, result) {
@@ -124,6 +141,79 @@ app.get("/api/skills", (req, res) => {
       res.json({status: "NOK", error: err.message});
     }
     res.json({status: "OK", data: result});
+  });
+});
+
+app.post("/api/add-task", (req, res) => {
+  var description = req.body.description;
+  var type = req.body.type;
+  var goal_id = req.body.goal_id;
+
+  var sql = "INSERT INTO tasks (description, type, goal_id) VALUES (?, ?, ?)";
+  con.query(sql, [description, type, goal_id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "OK", data: "Task added"});
+  });
+});
+
+app.post("/api/add-goal", (req, res) => {
+  var description = req.body.description;
+
+  var sql = "INSERT INTO goals (description) VALUES (?)";
+  con.query(sql, [description], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "OK", data: "Goal added"});
+  });
+});
+
+app.post("/api/add-action", (req, res) => {
+  var action = req.body.action;
+  var report = req.body.report;
+  var xp = req.body.xp;
+  var completes_task = req.body.completes_task;
+  var completed_at = toLocaleISOString(new Date());
+
+  var sql = "INSERT INTO actions (action, report, xp, completes_task, completed_at) VALUES (?, ?, ?, ?, ?)";
+  con.query(sql, [action, report, xp, completes_task, completed_at], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "OK", data: "Action added"});
+  });
+});
+
+app.post("/api/add-skill", (req, res) => {
+  var skill_name = req.body.skill_name;
+  var skill_percentage = req.body.skill_percentage;
+
+  var sql = "INSERT INTO skills (skill_name, skill_percentage) VALUES (?, ?)";
+  con.query(sql, [skill_name, skill_percentage], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message})
+    }
+    res.json({status: "OK", data: "Skill added"});
+  });
+});
+
+app.post("/api/add-item", (req, res) => {
+  var item_name = req.body.item_name;
+  var description = req.body.description;
+
+  var sql = "INSERT INTO inventory (item_name, description) VALUES (?, ?)";
+  con.query(sql, [item_name, description], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message})
+    }
+    res.json({status: "OK", data: "Item added"});
   });
 });
 
