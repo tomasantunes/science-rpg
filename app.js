@@ -260,7 +260,7 @@ app.get("/api/get-stats", async (req, res) => {
     var [rows1, fields1] = await con2.query(sql1);
     var xp = rows1[0].xp;
 
-    var level = 1;
+    var level = 0;
     var level_xp = 0;
     for (var i = 0; i <= 10000; i++) {
       level_xp += i * 1000;
