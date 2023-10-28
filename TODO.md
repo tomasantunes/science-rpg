@@ -2,6 +2,9 @@
 
 - Add a modal on the tasks to submit an action for a task
 - Add an option to edit skill
+- Create database
+- Create secret config file
+- Setup database connection
 - Create route for adding a goal
 - Create a route for listing goals
 - Create a route for adding a task
