@@ -7,6 +7,5 @@ export default function Tasks() {
       <Navbar />
       <div>Tasks</div>
     </>
-    
   )
 }
