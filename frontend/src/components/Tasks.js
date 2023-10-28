@@ -42,7 +42,7 @@ export default function Tasks() {
     <>
       <Navbar />
       
-      <div className="small-container">
+      <div className="medium-container">
         <h2>Tasks</h2>
         <Select options={goals} value={selectedGoal} onChange={changeSelectedGoal} className="my-2" />
         <table className="table table-striped table-bordered align-middle tasks">
@@ -50,6 +50,7 @@ export default function Tasks() {
               <tr>
                   <th>Task</th>
                   <th>Type</th>
+                  <th>XP</th>
                   <th>Complete</th>
                   <th>Options</th>
               </tr>
@@ -59,6 +60,7 @@ export default function Tasks() {
               <tr>
                 <td>{task.description}</td>
                 <td>{task.type}</td>
+                <td>{task.xp}</td>
                 <td></td>
                 <td></td>
               </tr>
@@ -71,6 +73,9 @@ export default function Tasks() {
               </td>
               <td>
                 <Select options={taskTypes} value={selectedTaskType} onChange={changeSelectedTaskType} />
+              </td>
+              <td>
+                <input type="text" className="form-control" placeholder="Set the XP" />
               </td>
               <td></td>
               <td>
