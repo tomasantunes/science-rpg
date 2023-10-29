@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 import Select from 'react-select';
 import $ from 'jquery';
 import config from '../config';
@@ -164,60 +164,61 @@ export default function Tasks() {
   }, [])
   return (
     <>
-      <Navbar />
-      
-      <div className="medium-container">
-        <h2>Tasks</h2>
-        <Select options={goals} value={selectedGoal} onChange={changeSelectedGoal} className="my-2" />
-        <table className="table table-striped table-bordered align-middle tasks">
-          <thead class="table-dark">
+      <Sidebar />
+      <div className="page">
+        <div className="medium-container">
+          <h2>Tasks</h2>
+          <Select options={goals} value={selectedGoal} onChange={changeSelectedGoal} className="my-2" />
+          <table className="table table-striped table-bordered align-middle tasks">
+            <thead class="table-dark">
+                <tr>
+                    <th>Task</th>
+                    <th>Type</th>
+                    <th>XP</th>
+                    <th>Complete</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+              {tasks.map((task) => (
+                <tr>
+                  <td>{task.description}</td>
+                  <td>{task.type}</td>
+                  <td>{task.xp}</td>
+                  <td></td>
+                  <td>
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        Options
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="#" onClick={() => { addAction(task.id) }}>Add Action</a></li>
+                        <li><a class="dropdown-item" href="#" onClick={() => { deleteTask(task.id) }}>Delete</a></li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
               <tr>
-                  <th>Task</th>
-                  <th>Type</th>
-                  <th>XP</th>
-                  <th>Complete</th>
-                  <th>Options</th>
-              </tr>
-          </thead>
-          <tbody>
-            {tasks.map((task) => (
-              <tr>
-                <td>{task.description}</td>
-                <td>{task.type}</td>
-                <td>{task.xp}</td>
+                <td>
+                  <input type="text" className="form-control" value={newTask.description} onChange={changeNewTaskDescription} placeholder="Add a new task" />
+                </td>
+                <td>
+                  <Select options={taskTypes} value={selectedTaskType} onChange={changeSelectedTaskType} />
+                </td>
+                <td>
+                  <input type="text" className="form-control" value={newTask.xp} onChange={changeNewTaskXp} placeholder="Set the XP" />
+                </td>
                 <td></td>
                 <td>
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                      Options
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      <li><a class="dropdown-item" href="#" onClick={() => { addAction(task.id) }}>Add Action</a></li>
-                      <li><a class="dropdown-item" href="#" onClick={() => { deleteTask(task.id) }}>Delete</a></li>
-                    </ul>
-                  </div>
+                  <button className="btn btn-success" onClick={addTask}>Add</button>
                 </td>
               </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td>
-                <input type="text" className="form-control" value={newTask.description} onChange={changeNewTaskDescription} placeholder="Add a new task" />
-              </td>
-              <td>
-                <Select options={taskTypes} value={selectedTaskType} onChange={changeSelectedTaskType} />
-              </td>
-              <td>
-                <input type="text" className="form-control" value={newTask.xp} onChange={changeNewTaskXp} placeholder="Set the XP" />
-              </td>
-              <td></td>
-              <td>
-                <button className="btn btn-success" onClick={addTask}>Add</button>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+            </tfoot>
+          </table>
+        </div>
       </div>
       <div class="modal addActionModal" tabindex="-1">
         <div class="modal-dialog">

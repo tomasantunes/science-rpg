@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 import $ from 'jquery';
 import config from '../config';
 import axios from 'axios';
@@ -100,48 +100,50 @@ export default function Skills() {
   }, [])
   return (
     <>
-      <Navbar />
-      <div className="small-container">
-        <h2>Skills</h2>
-        <table className="table table-striped table-bordered align-middle tasks">
-          <thead class="table-dark">
+      <Sidebar />
+      <div className="page">
+        <div className="small-container">
+          <h2>Skills</h2>
+          <table className="table table-striped table-bordered align-middle tasks">
+            <thead class="table-dark">
+                <tr>
+                    <th>Skill</th>
+                    <th>Progress</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+              {skills.map((skill) => (
+                <tr>
+                  <td>{skill.skill_name}</td>
+                  <td>{skill.skill_percentage}</td>
+                  <td>
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        Options
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="#" onClick={() => { showEditSkill(skill.id) }}>Edit</a></li>
+                        <li><a class="dropdown-item" href="#" onClick={() => { deleteSkill(skill.id) }}>Delete</a></li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
               <tr>
-                  <th>Skill</th>
-                  <th>Progress</th>
-                  <th>Options</th>
-              </tr>
-          </thead>
-          <tbody>
-            {skills.map((skill) => (
-              <tr>
-                <td>{skill.skill_name}</td>
-                <td>{skill.skill_percentage}</td>
                 <td>
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                      Options
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      <li><a class="dropdown-item" href="#" onClick={() => { showEditSkill(skill.id) }}>Edit</a></li>
-                      <li><a class="dropdown-item" href="#" onClick={() => { deleteSkill(skill.id) }}>Delete</a></li>
-                    </ul>
-                  </div>
+                  <input type="text" className="form-control" value={newSkill.skill_name} onChange={changeNewSkillName} placeholder="Add a new skill" />
+                </td>
+                <td></td>
+                <td>
+                  <button className="btn btn-success" onClick={addSkill}>Add</button>
                 </td>
               </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td>
-                <input type="text" className="form-control" value={newSkill.skill_name} onChange={changeNewSkillName} placeholder="Add a new skill" />
-              </td>
-              <td></td>
-              <td>
-                <button className="btn btn-success" onClick={addSkill}>Add</button>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+            </tfoot>
+          </table>
+        </div>
       </div>
       <div class="modal editSkillModal" tabindex="-1">
         <div class="modal-dialog">

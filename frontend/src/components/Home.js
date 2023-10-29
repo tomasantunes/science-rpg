@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 import $ from 'jquery';
 import config from '../config.json';
 import axios from 'axios';
@@ -87,47 +87,49 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
-      <div className="container">
-        <h2>Home</h2>
-        <div style={{textAlign: "center"}}>
-          <button className="btn btn-primary" onClick={loadQuest}>Start</button>
+      <Sidebar />
+      <div className="page">
+        <div className="container">
+          <h2>Home</h2>
+          <div style={{textAlign: "center"}}>
+            <button className="btn btn-primary" onClick={loadQuest}>Start</button>
+          </div>
+          {showQuest &&
+            <div className="quest">
+              {quest}
+            </div>
+          }
+          {showReport &&
+            <div className="report">
+              <form onSubmit={addAction}>
+                <div className="form-group my-2">
+                  <label>Action</label>
+                  <input type="text" value={newAction.action} onChange={changeNewActionAction} className="form-control" />
+                </div>
+                <div className="form-group my-2">
+                  <label>Report</label>
+                  <textarea className="form-control" value={newAction.report} onChange={changeNewActionReport} rows="5"></textarea>
+                </div>
+                <div className="form-group my-2">
+                  <label>Completes Task</label><br/>
+                  <input type="checkbox" checked={newAction.completes_task} onChange={changeNewActionCompletesTask} />
+                </div>
+                <div style={{textAlign: "right", marginBottom: "10px"}}>
+                  <button type="submit" className="btn btn-primary">Submit</button>
+                </div>
+              </form>
+            </div>
+          }
+          {showQuestResponse &&
+            <div className="quest-response">
+              {questResponse}
+            </div>
+          }
         </div>
-        {showQuest &&
-          <div className="quest">
-            {quest}
-          </div>
-        }
-        {showReport &&
-          <div className="report">
-            <form onSubmit={addAction}>
-              <div className="form-group my-2">
-                <label>Action</label>
-                <input type="text" value={newAction.action} onChange={changeNewActionAction} className="form-control" />
-              </div>
-              <div className="form-group my-2">
-                <label>Report</label>
-                <textarea className="form-control" value={newAction.report} onChange={changeNewActionReport} rows="5"></textarea>
-              </div>
-              <div className="form-group my-2">
-                <label>Completes Task</label><br/>
-                <input type="checkbox" checked={newAction.completes_task} onChange={changeNewActionCompletesTask} />
-              </div>
-              <div style={{textAlign: "right", marginBottom: "10px"}}>
-                <button type="submit" className="btn btn-primary">Submit</button>
-              </div>
-            </form>
-          </div>
-        }
-        {showQuestResponse &&
-          <div className="quest-response">
-            {questResponse}
-          </div>
+        {loading &&
+          <div className="loading">Loading&#8230;</div>
         }
       </div>
-      {loading &&
-        <div className="loading">Loading&#8230;</div>
-      }
     </>
     
   )

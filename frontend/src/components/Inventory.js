@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 import $ from 'jquery';
 import config from '../config';
 import axios from 'axios';
@@ -135,49 +135,51 @@ export default function Goals() {
   }, [])
   return (
     <>
-      <Navbar />
-      <div className="medium-container">
-        <h2>Items</h2>
-        <table className="table table-striped table-bordered align-middle tasks">
-          <thead class="table-dark">
+      <Sidebar />
+      <div className="page">
+        <div className="medium-container">
+          <h2>Items</h2>
+          <table className="table table-striped table-bordered align-middle tasks">
+            <thead class="table-dark">
+                <tr>
+                    <th>Item</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr>
+                  <td>{item.item_name}</td>
+                  <td>{item.description}</td>
+                  <td>{item.qtt}</td>
+                  <td>
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        Options
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="#" onClick={() => { showEditItem(item.id) }}>Edit</a></li>
+                        <li><a class="dropdown-item" href="#" onClick={() => { deleteItem(item.id) }}>Delete</a></li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
               <tr>
-                  <th>Item</th>
-                  <th>Description</th>
-                  <th>Quantity</th>
-                  <th>Options</th>
-              </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr>
-                <td>{item.item_name}</td>
-                <td>{item.description}</td>
-                <td>{item.qtt}</td>
+                <td></td>
+                <td></td>
+                <td></td>
                 <td>
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                      Options
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      <li><a class="dropdown-item" href="#" onClick={() => { showEditItem(item.id) }}>Edit</a></li>
-                      <li><a class="dropdown-item" href="#" onClick={() => { deleteItem(item.id) }}>Delete</a></li>
-                    </ul>
-                  </div>
+                  <button className="btn btn-success" onClick={addItem}>Add</button>
                 </td>
               </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
-                <button className="btn btn-success" onClick={addItem}>Add</button>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+            </tfoot>
+          </table>
+        </div>
       </div>
       <div class="modal addItemModal" tabindex="-1">
         <div class="modal-dialog">

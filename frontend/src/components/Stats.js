@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 import $ from 'jquery';
 import config from '../config.json';
 import axios from 'axios';
@@ -35,14 +35,16 @@ export default function Stats() {
   }, [])
   return (
     <>
-      <Navbar />
-      <div className="small-container">
-        <h2>Stats</h2>
-        <p><b>XP: </b>{xp}</p>
-        <p><b>Level: </b>{level}</p>
-        <p><b>Nr. Of Skills: </b>{nrSkills}</p>
-        <p><b>Goals completed: </b>{nrGoalsCompleted}</p>
-        <p><b>Nr. Of Items: </b>{nrItems}</p>
+      <Sidebar />
+      <div className="page">
+        <div className="small-container">
+          <h2>Stats</h2>
+          <p><b>XP: </b>{xp}</p>
+          <p><b>Level: </b>{level}</p>
+          <p><b>Nr. Of Skills: </b>{nrSkills}</p>
+          <p><b>Goals completed: </b>{nrGoalsCompleted}</p>
+          <p><b>Nr. Of Items: </b>{nrItems}</p>
+        </div>
       </div>
     </>
     

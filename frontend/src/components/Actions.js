@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 import $ from 'jquery';
 import config from '../config';
 import axios from 'axios';
@@ -39,19 +39,21 @@ export default function Actions() {
   }, []);
   return (
     <>
-      <Navbar />
-      <div className="small-container">
-        <h2>Actions</h2>
-          {actions.map((action) => (
-            <div className="action">
-              <div style={{textAlign: "right"}}>
-                <button className="btn btn-danger" onClick={(e) => { deleteAction(action.id); }}>Delete</button>
+      <Sidebar />
+      <div className="page">
+        <div className="small-container">
+          <h2>Actions</h2>
+            {actions.map((action) => (
+              <div className="action">
+                <div style={{textAlign: "right"}}>
+                  <button className="btn btn-danger" onClick={(e) => { deleteAction(action.id); }}>Delete</button>
+                </div>
+                <h4>{action.action}</h4>
+                <p>{action.report}</p>
+                <p><b>{action.xp} XP</b></p>
               </div>
-              <h4>{action.action}</h4>
-              <p>{action.report}</p>
-              <p><b>{action.xp} XP</b></p>
-            </div>
-          ))}
+            ))}
+        </div>
       </div>
     </>
   )
