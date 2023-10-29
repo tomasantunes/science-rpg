@@ -106,6 +106,18 @@ export default function Goals() {
     });
   }
 
+  function deleteItem(id) {
+    if (window.confirm("Are you sure you want to delete this item?") == true) {
+      axios.post(config.BASE_URL + "/api/delete-item", {id: id})
+      .then((response) => {
+        loadItems();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }
+
   function submitEditItem(e) {
     e.preventDefault();
     axios.post(config.BASE_URL + "/api/edit-item", editItem)
@@ -148,6 +160,7 @@ export default function Goals() {
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                       <li><a class="dropdown-item" href="#" onClick={() => { showEditItem(item.id) }}>Edit</a></li>
+                      <li><a class="dropdown-item" href="#" onClick={() => { deleteItem(item.id) }}>Delete</a></li>
                     </ul>
                   </div>
                 </td>

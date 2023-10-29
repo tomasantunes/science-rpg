@@ -283,6 +283,19 @@ app.post("/api/add-item", (req, res) => {
   });
 });
 
+app.post("/api/delete-item", (req, res) => {
+  var id = req.body.id;
+
+  var sql = "DELETE FROM inventory WHERE id = ?";
+  con.query(sql, [id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message})
+    }
+    res.json({status: "OK", data: "Item deleted"});
+  });
+});
+
 app.post("/api/edit-skill", (req, res) => {
   var id = req.body.id;
   var skill_name = req.body.skill_name;
