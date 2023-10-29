@@ -228,6 +228,19 @@ app.post("/api/add-action", (req, res) => {
   });
 });
 
+app.post("/api/delete-action", (req, res) => {
+  var id = req.body.id;
+
+  var sql = "DELETE FROM user_actions WHERE id = ?";
+  con.query(sql, [id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "OK", data: "Action deleted"});
+  });
+});
+
 app.post("/api/add-skill", (req, res) => {
   var skill_name = req.body.skill_name;
   var skill_percentage = req.body.skill_percentage;

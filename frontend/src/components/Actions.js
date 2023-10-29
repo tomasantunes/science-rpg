@@ -22,6 +22,18 @@ export default function Actions() {
     });
   }
 
+  function deleteAction(id) {
+    if (window.confirm("Are you sure you want to delete this action?") == true) {
+      axios.post(config.BASE_URL + "/api/delete-action", {id: id})
+      .then((response) => {
+        loadActions();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }
+
   useEffect(() => {
     loadActions();
   }, []);
@@ -32,6 +44,9 @@ export default function Actions() {
         <h2>Actions</h2>
           {actions.map((action) => (
             <div className="action">
+              <div style={{textAlign: "right"}}>
+                <button className="btn btn-danger" onClick={(e) => { deleteAction(action.id); }}>Delete</button>
+              </div>
               <h4>{action.action}</h4>
               <p>{action.report}</p>
               <p><b>{action.xp} XP</b></p>
