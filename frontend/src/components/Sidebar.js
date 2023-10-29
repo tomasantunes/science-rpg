@@ -20,6 +20,7 @@ export default function Sidebar() {
               <li><Link to="/skills">Skills</Link></li>
               <li><Link to="/inventory">Inventory</Link></li>
               <li><Link to="/stats">Stats</Link></li>
+              <li><Link to="/data">Data</Link></li>
           </ul>
       </div>
     </>

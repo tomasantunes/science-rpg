@@ -8,6 +8,7 @@ import Actions from './components/Actions';
 import Skills from './components/Skills';
 import Inventory from './components/Inventory';
 import Stats from './components/Stats';
+import Data from './components/Data';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/skills" element={<Skills />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/stats" element={<Stats />} />
+        <Route path="/data" element={<Data />} />
       </Routes>
     </Router>
   );

@@ -154,6 +154,44 @@ app.get("/api/skills", (req, res) => {
   });
 });
 
+app.get("/api/data", (req, res) => {
+  var sql = "SELECT * FROM data";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message})
+    }
+    res.json({status: "OK", data: result});
+  });
+});
+
+app.post("/api/add-data-entry", (req, res) => {
+  var description = req.body.description;
+  var qtt_desc = req.body.qtt_desc;
+
+  var sql = "INSERT INTO data (description, qtt_desc) VALUES (?, ?)";
+  con.query(sql, [description, qtt_desc], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message})
+    }
+    res.json({status: "OK", data: "Data entry added"});
+  });
+});
+
+app.post("/api/delete-data-entry", (req, res) => {
+  var id = req.body.id;
+
+  var sql = "DELETE FROM data WHERE id = ?";
+  con.query(sql, [id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message})
+    }
+    res.json({status: "OK", data: "Data entry deleted"});
+  });
+});
+
 app.post("/api/add-task", (req, res) => {
   var description = req.body.description;
   var type = req.body.type;
