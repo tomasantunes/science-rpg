@@ -356,6 +356,10 @@ app.post("/api/get-quest", async (req, res) => {
 
   var task = tasks[Math.floor(Math.random() * tasks.length)];
   var quest = await getQuest(task);
+
+  var sql2 = "INSERT INTO posts (body, role) VALUES (?, 'assistant')";
+  await con2.query(sql2, [quest]);
+
   res.json({status: "OK", data: {quest: quest, task_id: task.id, xp: task.xp}});
 });
 
@@ -363,6 +367,10 @@ app.post("/api/get-report-feedback", async (req, res) => {
   var action = req.body.action;
   var report = req.body.report;
   var feedback = await getReportFeeedback(action, report);
+
+  var sql2 = "INSERT INTO posts (body, role) VALUES (?, 'assistant')";
+  await con2.query(sql2, [feedback]);
+
   res.json({status: "OK", data: feedback});
 });
 
