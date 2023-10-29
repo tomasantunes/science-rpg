@@ -71,6 +71,18 @@ export default function Skills() {
     });
   }
 
+  function deleteSkill(id) {
+    if (window.confirm("Are you sure you want to delete this skill?") == true) {
+      axios.post(config.BASE_URL + "/api/delete-skill", {id: id})
+      .then((response) => {
+        loadSkills();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }
+
   function submitEditSkill(e) {
     e.preventDefault();
     axios.post(config.BASE_URL + "/api/edit-skill", editSkill)
@@ -111,6 +123,7 @@ export default function Skills() {
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                       <li><a class="dropdown-item" href="#" onClick={() => { showEditSkill(skill.id) }}>Edit</a></li>
+                      <li><a class="dropdown-item" href="#" onClick={() => { deleteSkill(skill.id) }}>Delete</a></li>
                     </ul>
                   </div>
                 </td>

@@ -255,6 +255,19 @@ app.post("/api/add-skill", (req, res) => {
   });
 });
 
+app.post("/api/delete-skill", (req, res) => {
+  var id = req.body.id;
+
+  var sql = "DELETE FROM skills WHERE id = ?";
+  con.query(sql, [id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message})
+    }
+    res.json({status: "OK", data: "Skill deleted"});
+  });
+});
+
 app.post("/api/add-item", (req, res) => {
   var item_name = req.body.item_name;
   var description = req.body.description;
