@@ -13,3 +13,10 @@ input[type=checkbox] {
     height: 35px;
     vertical-align: middle;
 }
+
+.action {
+    margin: 0 5px;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #ccc;
+}

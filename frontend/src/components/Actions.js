@@ -30,15 +30,13 @@ export default function Actions() {
       <Navbar />
       <div className="small-container">
         <h2>Actions</h2>
-        <ul className="actions">
           {actions.map((action) => (
-            <li>
+            <div className="action">
               <h4>{action.action}</h4>
               <p>{action.report}</p>
               <p><b>{action.xp} XP</b></p>
-            </li>
+            </div>
           ))}
-        </ul>
       </div>
     </>
   )
