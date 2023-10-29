@@ -137,6 +137,18 @@ export default function Tasks() {
     });
   }
 
+  function deleteTask(taskId) {
+    if (window.confirm("Are you sure you want to delete this task?") == true) {
+      axios.post(config.BASE_URL + "/api/delete-task", {task_id: taskId})
+      .then((response) => {
+        loadTasks(selectedGoal.value);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }
+
   function loadTasks(goalId) {
     axios.get(config.BASE_URL + "/api/tasks/" + goalId)
     .then((response) => {
@@ -181,6 +193,7 @@ export default function Tasks() {
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                       <li><a class="dropdown-item" href="#" onClick={() => { addAction(task.id) }}>Add Action</a></li>
+                      <li><a class="dropdown-item" href="#" onClick={() => { deleteTask(task.id) }}>Delete</a></li>
                     </ul>
                   </div>
                 </td>

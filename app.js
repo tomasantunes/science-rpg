@@ -170,6 +170,19 @@ app.post("/api/add-task", (req, res) => {
   });
 });
 
+app.post("/api/delete-task", (req, res) => {
+  var task_id = req.body.task_id;
+
+  var sql = "DELETE FROM tasks WHERE id = ?";
+  con.query(sql, [task_id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "OK", data: "Task deleted"});
+  });
+});
+
 app.post("/api/add-goal", (req, res) => {
   var description = req.body.description;
   var priority = req.body.priority;
