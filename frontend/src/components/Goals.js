@@ -50,6 +50,18 @@ export default function Goals() {
     });
   }
 
+  function deleteGoal(id) {
+    if (window.confirm("Are you sure you want to delete this goal?") == true) {
+      axios.post(config.BASE_URL + "/api/delete-goal", {id: id})
+      .then((response) => {
+        loadGoals();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }
+
   useEffect(() => {
     loadGoals();
   }, [])
@@ -64,6 +76,7 @@ export default function Goals() {
                   <th>Goal</th>
                   <th>Priority</th>
                   <th>Progress</th>
+                  <th>Options</th>
               </tr>
           </thead>
           <tbody>
@@ -72,6 +85,16 @@ export default function Goals() {
                 <td>{goal.description}</td>
                 <td>{goal.priority}</td>
                 <td>{goal.progress}</td>
+                <td>
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      Options
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      <li><a class="dropdown-item" href="#" onClick={() => { deleteGoal(goal.id) }}>Delete</a></li>
+                    </ul>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -83,6 +106,7 @@ export default function Goals() {
               <td>
                 <input type="text" className="form-control" value={newGoal.priority} onChange={changeNewGoalPriority} placeholder="Set priority" />
               </td>
+              <td></td>
               <td>
                 <button className="btn btn-success" onClick={addGoal}>Add</button>
               </td>

@@ -197,6 +197,19 @@ app.post("/api/add-goal", (req, res) => {
   });
 });
 
+app.post("/api/delete-goal", (req, res) => {
+  var id = req.body.id;
+
+  var sql = "DELETE FROM goals WHERE id = ?";
+  con.query(sql, [id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+    }
+    res.json({status: "OK", data: "Goal deleted"});
+  });
+});
+
 app.post("/api/add-action", (req, res) => {
   var task_id = req.body.task_id;
   var action = req.body.action;
