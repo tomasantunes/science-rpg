@@ -12,7 +12,8 @@ window.bootstrap = require('bootstrap');
 export default function Goals() {
   const [goals, setGoals] = useState([]);
   const [newGoal, setNewGoal] = useState({
-    description: ""
+    description: "",
+    priority: "",
   });
 
   function loadGoals() {
@@ -29,6 +30,13 @@ export default function Goals() {
     setNewGoal({
       ...newGoal,
       description: e.target.value
+    });
+  }
+
+  function changeNewGoalPriority(e) {
+    setNewGoal({
+      ...newGoal,
+      priority: e.target.value
     });
   }
 
@@ -54,6 +62,7 @@ export default function Goals() {
           <thead class="table-dark">
               <tr>
                   <th>Goal</th>
+                  <th>Priority</th>
                   <th>Progress</th>
               </tr>
           </thead>
@@ -61,6 +70,7 @@ export default function Goals() {
             {goals.map((goal) => (
               <tr>
                 <td>{goal.description}</td>
+                <td>{goal.priority}</td>
                 <td>{goal.progress}</td>
               </tr>
             ))}
@@ -69,6 +79,9 @@ export default function Goals() {
             <tr>
               <td>
                 <input type="text" className="form-control" value={newGoal.description} onChange={changeNewGoalDescription} placeholder="Add a new goal" />
+              </td>
+              <td>
+                <input type="text" className="form-control" value={newGoal.priority} onChange={changeNewGoalPriority} placeholder="Set priority" />
               </td>
               <td>
                 <button className="btn btn-success" onClick={addGoal}>Add</button>

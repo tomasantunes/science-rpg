@@ -6,7 +6,8 @@ var logger = require('morgan');
 var cors = require('cors');
 var mysql = require('mysql2');
 var mysql2 = require('mysql2/promise');
-var secretConfig = require('./secret-config.json')
+var secretConfig = require('./secret-config.json');
+const OpenAI = require("openai");
 
 var app = express();
 
@@ -73,6 +74,12 @@ else if (secretConfig.ENVIRONMENT == "UBUNTU") {
     dateStrings: true
   });
 }
+
+const configuration = {
+  apiKey: secretConfig.OPENAI_API_KEY,
+};
+
+const openai = new OpenAI(configuration);
 
 function toLocaleISOString(date) {
   function pad(number) {
@@ -165,9 +172,10 @@ app.post("/api/add-task", (req, res) => {
 
 app.post("/api/add-goal", (req, res) => {
   var description = req.body.description;
+  var priority = req.body.priority;
 
-  var sql = "INSERT INTO goals (description) VALUES (?)";
-  con.query(sql, [description], function(err, result) {
+  var sql = "INSERT INTO goals (description, priority) VALUES (?, ?)";
+  con.query(sql, [description, priority], function(err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: err.message});
@@ -309,6 +317,53 @@ app.get("/api/get-stats", async (req, res) => {
     console.log(err);
     res.json({status: "NOK", error: err.message});
   }
+});
+
+async function getQuest(task) {
+  var prompt = "Act as a Dungeon Master in a sci-fi RPG and write me a quest. Leave out the XP reward. The quest should end up in the player doing the following task: ";
+  prompt += task.description;
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{"role": "user", "content": prompt}],
+  });
+  console.log(completion.choices[0].message);
+  var message = completion.choices[0].message;
+  return message.content;
+}
+
+async function getReportFeeedback(action, report) {
+  var prompt = "Act as a Dungeon Master in a sci-fi RPG and give some feedback to the player after he has completed a quest and written the following report: \n\n";
+  prompt += action + "\n\n" + report;
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{"role": "user", "content": prompt}],
+  });
+  console.log(completion.choices[0].message);
+  var message = completion.choices[0].message;
+  return message.content;
+}
+
+app.post("/api/get-quest", async (req, res) => {
+  var sql = "SELECT *, goals.priority FROM tasks INNER JOIN goals ON tasks.goal_id = goals.id";
+  var [rows, fields] = await con2.query(sql);
+
+  var tasks = [];
+  for (var i in rows) {
+    for (var j = 0; j < rows[i].priority; j++) {
+      tasks.push(rows[i]);
+    }
+  }
+
+  var task = tasks[Math.floor(Math.random() * tasks.length)];
+  var quest = await getQuest(task);
+  res.json({status: "OK", data: {quest: quest, task_id: task.id, xp: task.xp}});
+});
+
+app.post("/api/get-report-feedback", async (req, res) => {
+  var action = req.body.action;
+  var report = req.body.report;
+  var feedback = await getReportFeeedback(action, report);
+  res.json({status: "OK", data: feedback});
 });
 
 // catch 404 and forward to error handler
