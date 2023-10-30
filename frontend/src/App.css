@@ -25,13 +25,13 @@ input[type=checkbox] {
     background-color: #ccc;
     padding: 15px;
     white-space: pre-line;
-    margin: 0 10px;
+    margin: 10px 0;
 }
 
 .report {
     background-color: #ccc;
     padding: 15px;
-    margin: 0 10px;
+    margin: 10px 0;
 }
 
 .sidebar {
@@ -63,5 +63,12 @@ input[type=checkbox] {
 .page {
     margin-left: 300px;
     padding: 25px;
+}
+
+.chat-answer {
+    background-color: #ccc;
+    padding: 15px;
+    margin: 15px 0;
+    white-space: pre-line;
 }
 

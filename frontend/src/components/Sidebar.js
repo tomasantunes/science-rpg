@@ -14,6 +14,7 @@ export default function Sidebar() {
           <h3><b>Science RPG</b></h3>
           <ul className="menu">
               <li><Link to="/home">Home</Link></li>
+              <li><Link to="/chat">Chat</Link></li>
               <li><Link to="/goals">Goals</Link></li>
               <li><Link to="/tasks">Tasks</Link></li>
               <li><Link to="/actions">Actions</Link></li>

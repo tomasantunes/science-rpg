@@ -7,7 +7,13 @@ var cors = require('cors');
 var mysql = require('mysql2');
 var mysql2 = require('mysql2/promise');
 var secretConfig = require('./secret-config.json');
-const OpenAI = require("openai");
+var OpenAI2 = require('openai');
+var { OpenAI } = require("langchain/llms/openai");
+var { loadQARefineChain } = require("langchain/chains");
+var { TextLoader } = require("langchain/document_loaders/fs/text");
+var { MemoryVectorStore } = require("langchain/vectorstores/memory");
+var { OpenAIEmbeddings } = require("langchain/embeddings/openai");
+var fs = require('fs');
 
 var app = express();
 
@@ -75,11 +81,17 @@ else if (secretConfig.ENVIRONMENT == "UBUNTU") {
   });
 }
 
-const configuration = {
-  apiKey: secretConfig.OPENAI_API_KEY,
-};
+const openai = new OpenAI({
+  temperature: 0
+});
 
-const openai = new OpenAI(configuration);
+const openai2 = new OpenAI2({
+  apiKey: secretConfig.OPENAI_API_KEY
+});
+
+const chain = loadQARefineChain(openai);
+
+const embeddings = new OpenAIEmbeddings();
 
 function toLocaleISOString(date) {
   function pad(number) {
@@ -425,9 +437,9 @@ app.get("/api/get-stats", async (req, res) => {
 });
 
 async function getQuest(task) {
-  var prompt = "Act as a Dungeon Master in a sci-fi RPG and write me a quest. Leave out the XP reward. The quest should end up in the player doing the following task: ";
+  var prompt = "Act as a Dungeon Master in a sci-fi RPG and write me a quest. Leave out the XP reward. Limit your quest to no more than 75 words. The quest should end up in the player doing the following task: ";
   prompt += task.description;
-  const completion = await openai.chat.completions.create({
+  const completion = await openai2.chat.completions.create({
     model: "gpt-4",
     messages: [{"role": "user", "content": prompt}],
   });
@@ -439,13 +451,64 @@ async function getQuest(task) {
 async function getReportFeeedback(action, report) {
   var prompt = "Act as a Dungeon Master in a sci-fi RPG and give some feedback to the player after he has completed a quest and written the following report: \n\n";
   prompt += action + "\n\n" + report;
-  const completion = await openai.chat.completions.create({
+  const completion = await openai2.chat.completions.create({
     model: "gpt-4",
     messages: [{"role": "user", "content": prompt}],
   });
   console.log(completion.choices[0].message);
   var message = completion.choices[0].message;
   return message.content;
+}
+
+async function getAllDataJSON() {
+  var sql1 = "SELECT * FROM goals";
+  var [rows1, fields1] = await con2.query(sql1);
+
+  var sql2 = "SELECT * FROM tasks";
+  var [rows2, fields2] = await con2.query(sql2);
+
+  var sql3 = "SELECT * FROM user_actions";
+  var [rows3, fields3] = await con2.query(sql3);
+
+  var sql4 = "SELECT * FROM skills";
+  var [rows4, fields4] = await con2.query(sql4);
+
+  var sql5 = "SELECT * FROM inventory";
+  var [rows5, fields5] = await con2.query(sql5);
+
+  var sql6 = "SELECT * FROM data";
+  var [rows6, fields6] = await con2.query(sql6);
+
+  var data = {
+    goals: rows1,
+    tasks: rows2,
+    user_actions: rows3,
+    skills: rows4,
+    inventory: rows5,
+    data: rows6
+  };
+
+  return JSON.stringify(data);
+
+}
+
+async function getChatResponse(question) {
+  var data = await getAllDataJSON();
+  var filename = path.join(__dirname, 'exported_data', 'data.json')
+  fs.writeFileSync(filename, data);
+
+  const loader = new TextLoader(filename);
+  const docs = await loader.loadAndSplit();
+  const store = await MemoryVectorStore.fromDocuments(docs, embeddings);
+
+  const relevantDocs = await store.similaritySearch(question);
+
+  const res = await chain.call({
+    input_documents: relevantDocs,
+    question,
+  });
+
+  return res.output_text;
 }
 
 app.post("/api/get-quest", async (req, res) => {
@@ -465,7 +528,7 @@ app.post("/api/get-quest", async (req, res) => {
   var sql2 = "INSERT INTO posts (body, role) VALUES (?, 'assistant')";
   await con2.query(sql2, [quest]);
 
-  res.json({status: "OK", data: {quest: quest, task_id: task.id, xp: task.xp}});
+  res.json({status: "OK", data: {quest: quest, task_id: task.id, xp: task.xp, task_description: task.description}});
 });
 
 app.post("/api/get-report-feedback", async (req, res) => {
@@ -477,6 +540,20 @@ app.post("/api/get-report-feedback", async (req, res) => {
   await con2.query(sql2, [feedback]);
 
   res.json({status: "OK", data: feedback});
+});
+
+app.post("/api/get-chat-response", async (req, res) => {
+  var chat_input = req.body.chat_input;
+
+  var sql = "INSERT INTO posts (body, role) VALUES (?, 'user')";
+  await con2.query(sql, [chat_input]);
+
+  var response = await getChatResponse(chat_input);
+
+  var sql2 = "INSERT INTO posts (body, role) VALUES (?, 'assistant')";
+  await con2.query(sql2, [response]);
+
+  res.json({status: "OK", data: response});
 });
 
 // catch 404 and forward to error handler

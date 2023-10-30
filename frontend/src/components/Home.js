@@ -12,6 +12,7 @@ window.bootstrap = require('bootstrap');
 export default function Home() {
   const [quest, setQuest] = useState('');
   const [questResponse, setQuestResponse] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
   const [showQuest, setShowQuest] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showQuestResponse, setShowQuestResponse] = useState(false);
@@ -33,6 +34,7 @@ export default function Home() {
         task_id: response.data.data.task_id,
         xp: response.data.data.xp
       })
+      setTaskDescription(response.data.data.task_description)
       setShowQuest(true);
       setShowReport(true);
     })
@@ -122,6 +124,7 @@ export default function Home() {
           }
           {showQuestResponse &&
             <div className="quest-response">
+              <p><b>{taskDescription}</b></p>
               {questResponse}
             </div>
           }
