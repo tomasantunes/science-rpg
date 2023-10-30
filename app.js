@@ -122,8 +122,9 @@ app.get("/api/tasks/:goal_id", (req, res) => {
 });
 
 app.get("/api/actions", (req, res) => {
-  var sql = "SELECT * FROM user_actions LIMIT 10";
-  con.query(sql, function(err, result) {
+  var dt = req.query.dt;
+  var sql = "SELECT * FROM user_actions WHERE DATE(completed_at) = ?";
+  con.query(sql, [dt], function(err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: err.message});
