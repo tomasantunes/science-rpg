@@ -51,6 +51,7 @@ export default function Actions() {
                 <h4>{action.action}</h4>
                 <p>{action.report}</p>
                 <p><b>{action.xp} XP</b></p>
+                <p><b>Quantity: </b>{action.qtt}</p>
               </div>
             ))}
         </div>

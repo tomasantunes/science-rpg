@@ -253,11 +253,12 @@ app.post("/api/add-action", (req, res) => {
   var action = req.body.action;
   var report = req.body.report;
   var xp = req.body.xp;
+  var qtt = req.body.qtt;
   var completes_task = req.body.completes_task;
   var completed_at = toLocaleISOString(new Date());
 
-  var sql = "INSERT INTO user_actions (task_id, action, report, xp, completes_task, completed_at) VALUES (?, ?, ?, ?, ?, ?)";
-  con.query(sql, [task_id, action, report, xp, completes_task, completed_at], function(err, result) {
+  var sql = "INSERT INTO user_actions (task_id, action, report, xp, qtt, completes_task, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  con.query(sql, [task_id, action, report, xp, qtt, completes_task, completed_at], function(err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: err.message});
@@ -366,7 +367,7 @@ app.post("/api/edit-item", (req, res) => {
 });
 
 app.get("/api/get-stats", async (req, res) => {
-  var sql1 = "SELECT SUM(xp) AS xp FROM user_actions";
+  var sql1 = "SELECT SUM(xp * qtt) AS xp FROM user_actions";
   try {
     var [rows1, fields1] = await con2.query(sql1);
     var xp = rows1[0].xp;

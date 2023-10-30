@@ -26,6 +26,7 @@ export default function Tasks() {
     action: "",
     report: "",
     xp: "",
+    qtt: "",
     completes_task: false
   });
 
@@ -127,6 +128,13 @@ export default function Tasks() {
     setNewAction({
       ...newAction,
       report: e.target.value
+    });
+  }
+
+  function changeNewActionQtt(e) {
+    setNewAction({
+      ...newAction,
+      qtt: e.target.value
     });
   }
 
@@ -239,6 +247,12 @@ export default function Tasks() {
                   <label className="control-label">Report</label>
                   <div>
                       <textarea className="form-control input-lg" name="report" value={newAction.report} onChange={changeNewActionReport} />
+                  </div>
+                </div>
+                <div className="form-group py-2">
+                  <label className="control-label">Quantity</label>
+                  <div>
+                      <input type="text" className="form-control input-lg" name="qtt" value={newAction.qtt} onChange={changeNewActionQtt}/>
                   </div>
                 </div>
                 <div className="form-group py-2">
