@@ -14,6 +14,7 @@ var { TextLoader } = require("langchain/document_loaders/fs/text");
 var { MemoryVectorStore } = require("langchain/vectorstores/memory");
 var { OpenAIEmbeddings } = require("langchain/embeddings/openai");
 var fs = require('fs');
+const AWS = require('aws-sdk');
 
 var app = express();
 
@@ -80,6 +81,13 @@ else if (secretConfig.ENVIRONMENT == "UBUNTU") {
     dateStrings: true
   });
 }
+
+AWS.config = new AWS.Config();
+AWS.config.accessKeyId = secretConfig.AWS_ACCESS_KEY_ID;
+AWS.config.secretAccessKey = secretConfig.AWS_SECRET_ACCESS_KEY;
+AWS.config.region = "eu-north-1";
+
+const Polly = new AWS.Polly();
 
 const openai = new OpenAI({
   temperature: 0
@@ -218,6 +226,55 @@ app.post("/api/add-task", (req, res) => {
       res.json({status: "NOK", error: err.message});
     }
     res.json({status: "OK", data: "Task added"});
+  });
+});
+
+app.get("/api/get-audio", (req, res) => {
+  var id = req.query.id;
+
+  res.sendFile(path.resolve(__dirname) + "/speech/"+id+".mp3");
+});
+
+app.get("/api/text-to-speech", (req, res) => {
+  var id = req.query.id;
+
+  if (fs.existsSync("speech/"+id+".mp3")) {
+    res.json({status: "OK", data: "Audio file exists."});
+    return;
+  }
+
+  var sql = "SELECT * FROM posts WHERE id = ?;";
+  var params = [id];
+  con.query(sql, params, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+      return;
+    }
+    var content = result[0].body;
+    if (content.length > 3000) {
+      content = content.substring(0, 3000);
+    }
+    var params = {
+      OutputFormat: "mp3",
+      Text: content,
+      VoiceId: "Emma"
+    };
+    Polly.synthesizeSpeech(params, function(err, data) {
+      if (err) {
+        console.log(err);
+        res.json({status: "NOK", error: err.message});
+        return;
+      }
+      fs.writeFile("speech/"+id+".mp3", data.AudioStream, function(err) {
+        if (err) {
+          console.log(err);
+          res.json({status: "NOK", error: err.message});
+          return;
+        }
+        res.json({status: "OK", data: "Audio file created successfully."});
+      });
+    });
   });
 });
 
@@ -451,6 +508,7 @@ async function getQuest(task) {
 async function getReportFeeedback(action, report) {
   var prompt = "Act as a Dungeon Master in a sci-fi RPG and give some feedback to the player after he has completed a quest and written the following report: \n\n";
   prompt += action + "\n\n" + report;
+  prompt += "\n\nUse no more than 75 words.";
   const completion = await openai2.chat.completions.create({
     model: "gpt-4",
     messages: [{"role": "user", "content": prompt}],
@@ -512,7 +570,7 @@ async function getChatResponse(question) {
 }
 
 app.post("/api/get-quest", async (req, res) => {
-  var sql = "SELECT *, goals.priority FROM tasks INNER JOIN goals ON tasks.goal_id = goals.id";
+  var sql = "SELECT tasks.*, goals.priority FROM tasks INNER JOIN goals ON tasks.goal_id = goals.id";
   var [rows, fields] = await con2.query(sql);
 
   var tasks = [];
@@ -526,9 +584,9 @@ app.post("/api/get-quest", async (req, res) => {
   var quest = await getQuest(task);
 
   var sql2 = "INSERT INTO posts (body, role) VALUES (?, 'assistant')";
-  await con2.query(sql2, [quest]);
+  var insert = await con2.query(sql2, [quest]);
 
-  res.json({status: "OK", data: {quest: quest, task_id: task.id, xp: task.xp, task_description: task.description}});
+  res.json({status: "OK", data: {quest: quest, task_id: task.id, xp: task.xp, task_description: task.description, post_id: insert[0].insertId}});
 });
 
 app.post("/api/get-report-feedback", async (req, res) => {
@@ -537,9 +595,9 @@ app.post("/api/get-report-feedback", async (req, res) => {
   var feedback = await getReportFeeedback(action, report);
 
   var sql2 = "INSERT INTO posts (body, role) VALUES (?, 'assistant')";
-  await con2.query(sql2, [feedback]);
+  var insert = await con2.query(sql2, [feedback]);
 
-  res.json({status: "OK", data: feedback});
+  res.json({status: "OK", data: {feedback: feedback, post_id: insert[0].insertId}});
 });
 
 app.post("/api/get-chat-response", async (req, res) => {

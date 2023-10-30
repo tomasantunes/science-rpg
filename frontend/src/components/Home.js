@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import Sidebar from './Sidebar';
 import $ from 'jquery';
 import config from '../config.json';
@@ -10,25 +10,37 @@ global.jQuery = $;
 window.bootstrap = require('bootstrap');
 
 export default function Home() {
-  const [quest, setQuest] = useState('');
-  const [questResponse, setQuestResponse] = useState('');
+  const [quest, setQuest] = useState({
+    text: "",
+    id: null
+  });
+  const [questResponse, setQuestResponse] = useState({
+    text: "",
+    id: null
+  });
   const [taskDescription, setTaskDescription] = useState('');
   const [showQuest, setShowQuest] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showQuestResponse, setShowQuestResponse] = useState(false);
+  const [audioSource, setAudioSource] = useState("");
   const [loading, setLoading] = useState(false);
   const [newAction, setNewAction] = useState({
     action: "",
     report: "",
-    completes_task: false
+    completes_task: false,
+    qtt: 1
   });
+  const audioRef = useRef();
 
   function loadQuest() {
     setLoading(true);
     axios.post(config.BASE_URL + "/api/get-quest")
     .then((response) => {
       setLoading(false);
-      setQuest(response.data.data.quest);
+      setQuest({
+        text: response.data.data.quest,
+        id: response.data.data.post_id
+      });
       setNewAction({
         ...newAction,
         task_id: response.data.data.task_id,
@@ -41,6 +53,23 @@ export default function Home() {
     .catch((err) => {
       console.log(err);
     });
+  }
+
+  function listen(id) {
+    axios.get(config.BASE_URL + '/api/text-to-speech', {params: {id}})
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        updateAudio(config.BASE_URL + "/api/get-audio/?id=" + id);
+      }
+      else {
+        alert(response.data.error);
+      }
+    });
+  }
+
+  const updateAudio = (source) => {
+    console.log(source);
+    setAudioSource(source);
   }
 
   function changeNewActionAction(e) {
@@ -76,7 +105,10 @@ export default function Home() {
     });
     axios.post(config.BASE_URL + "/api/get-report-feedback", newAction)
     .then((response) => {
-      setQuestResponse(response.data.data);
+      setQuestResponse({
+        text: response.data.data.feedback,
+        id: response.data.data.post_id
+      });
       setShowQuestResponse(true);
       setLoading(false);
     })
@@ -85,7 +117,13 @@ export default function Home() {
     });
   }
 
-
+  useEffect(() => {
+    if(audioSource != "" && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.load();
+      audioRef.current.play();
+    } 
+  }, [audioSource]);
 
   return (
     <>
@@ -98,7 +136,11 @@ export default function Home() {
           </div>
           {showQuest &&
             <div className="quest">
-              {quest}
+              <div style={{textAlign: "right"}}>
+                <button className="btn btn-primary btn-sm" onClick={(e) => listen(quest.id)}>Listen</button>
+              </div>
+              <p><b>{taskDescription}</b></p>
+              {quest.text}
             </div>
           }
           {showReport &&
@@ -124,14 +166,20 @@ export default function Home() {
           }
           {showQuestResponse &&
             <div className="quest-response">
-              <p><b>{taskDescription}</b></p>
-              {questResponse}
+              <div style={{textAlign: "right"}}>
+                <button className="btn btn-primary btn-sm" onClick={(e) => listen(questResponse.id)}>Listen</button>
+              </div>
+              {questResponse.text}
             </div>
           }
         </div>
         {loading &&
           <div className="loading">Loading&#8230;</div>
         }
+        <audio controls="controls" style={{visibility: "hidden"}} ref={audioRef}>
+          <source src={audioSource} type="audio/mp3"></source>
+          Your browser does not support the audio format.
+        </audio>
       </div>
     </>
     
