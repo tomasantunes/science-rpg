@@ -43,6 +43,10 @@ export default function Data() {
   function addDataEntry() {
     axios.post(config.BASE_URL + "/api/add-data-entry", newDataEntry)
     .then((response) => {
+      setNewDataEntry({
+        description: "",
+        qtt_desc: "",
+      });
       loadData();
     })
     .catch((err) => {

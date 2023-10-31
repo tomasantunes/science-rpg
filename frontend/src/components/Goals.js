@@ -44,6 +44,10 @@ export default function Goals() {
     axios.post(config.BASE_URL + "/api/add-goal", newGoal)
     .then((response) => {
       loadGoals();
+      setNewGoal({
+        description: "",
+        priority: "",
+      })
     })
     .catch((err) => {
       console.log(err);

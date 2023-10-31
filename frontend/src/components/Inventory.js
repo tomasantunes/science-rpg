@@ -67,6 +67,11 @@ export default function Goals() {
     e.preventDefault();
     axios.post(config.BASE_URL + "/api/add-item", newItem)
     .then((response) => {
+      setNewItem({
+        item_name: "",
+        description: "",
+        qtt: ""
+      });
       loadItems();
       closeAddItem();
     })

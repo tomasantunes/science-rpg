@@ -40,6 +40,10 @@ export default function Skills() {
   function addSkill() {
     axios.post(config.BASE_URL + "/api/add-skill", newSkill)
     .then((response) => {
+      setNewSkill({
+        skill_name: "",
+        skill_percentage: 0
+      });
       loadSkills();
     })
     .catch((err) => {

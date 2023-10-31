@@ -83,6 +83,12 @@ export default function Tasks() {
   function addTask() {
     axios.post(config.BASE_URL + "/api/add-task", newTask)
     .then((response) => {
+      setNewTask({
+        goal_id: null,
+        description: "",
+        type: "",
+        xp: ""
+      });
       loadTasks(selectedGoal.value);
     })
     .catch((err) => {
@@ -109,8 +115,16 @@ export default function Tasks() {
     axios.post(config.BASE_URL + "/api/add-action", newAction)
     .then((response) => {
       loadTasks(selectedGoal.value);
-      alert("Action added.");
+      setNewAction({
+        task_id: null,
+        action: "",
+        report: "",
+        xp: "",
+        qtt: "",
+        completes_task: false
+      });
       closeAddAction();
+      alert("Action added.");
     })
     .catch((err) => {
       console.log(err);
