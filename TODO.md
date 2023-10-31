@@ -1,3 +1,4 @@
 # TODO
 
-- Clear inputs after inserting
+- Add field to tasks: "is_quest".
+- Add option to edit task.
