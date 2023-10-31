@@ -15,7 +15,15 @@ export default function Tasks() {
   const [selectedGoal, setSelectedGoal] = useState();
   const [tasks, setTasks] = useState([]);
   const [selectedTaskType, setSelectedTaskType] = useState();
+  const [selectedEditTaskType, setSelectedEditTaskType] = useState();
   const [newTask, setNewTask] = useState({
+    goal_id: null,
+    description: "",
+    type: "",
+    xp: "",
+    is_quest: true
+  });
+  const [editTask, setEditTask] = useState({
     goal_id: null,
     description: "",
     type: "",
@@ -174,6 +182,67 @@ export default function Tasks() {
     }
   }
 
+  function showEditTask(taskId) {
+    var task_to_edit = tasks.find((task) => task.id == taskId);
+    setEditTask({
+      id: task_to_edit.id,
+      goal_id: task_to_edit.goal_id,
+      description: task_to_edit.description,
+      type: task_to_edit.type,
+      xp: task_to_edit.xp,
+      is_quest: task_to_edit.is_quest == 1 ? true : false
+    });
+    setSelectedEditTaskType(taskTypes.find((taskType) => taskType.value == task_to_edit.type));
+    $(".editTaskModal").modal("show");
+  }
+
+  function closeEditTask() {
+    $(".editTaskModal").modal("hide");
+  }
+
+  function changeEditTaskDescription(e) {
+    setEditTask({
+      ...editTask,
+      description: e.target.value
+    });
+  }
+
+  function changeEditTaskType(taskType) {
+    setSelectedEditTaskType(taskType);
+    setEditTask({
+      ...editTask,
+      type: taskType.value
+    });
+  }
+
+  function changeEditTaskXp(e) {
+    setEditTask({
+      ...editTask,
+      xp: e.target.value
+    });
+  }
+
+  function changeEditTaskIsQuest(e) {
+    setEditTask({
+      ...editTask,
+      is_quest: e.target.checked
+    });
+  }
+
+  function submitEditTask(e) {
+    e.preventDefault();
+    axios.post(config.BASE_URL + "/api/edit-task", editTask)
+    .then((response) => {
+      loadTasks(selectedGoal.value);
+      closeEditTask();
+      alert("Task edited.");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
+
   function loadTasks(goalId) {
     axios.get(config.BASE_URL + "/api/tasks/" + goalId)
     .then((response) => {
@@ -220,6 +289,7 @@ export default function Tasks() {
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         <li><a class="dropdown-item" href="#" onClick={() => { addAction(task.id) }}>Add Action</a></li>
+                        <li><a class="dropdown-item" href="#" onClick={() => { showEditTask(task.id) }}>Edit</a></li>
                         <li><a class="dropdown-item" href="#" onClick={() => { deleteTask(task.id) }}>Delete</a></li>
                       </ul>
                     </div>
@@ -286,6 +356,49 @@ export default function Tasks() {
                 <div className="form-group">
                     <div style={{textAlign: "right"}}>
                         <button type="submit" className="btn btn-primary">Add</button>
+                    </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal editTaskModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Task</h5>
+              <button type="button" class="btn-close" onClick={closeEditTask} aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form onSubmit={submitEditTask}>
+                <div className="form-group py-2">
+                  <label className="control-label">Description</label>
+                  <div>
+                      <input type="text" className="form-control input-lg" name="description" value={editTask.description} onChange={changeEditTaskDescription}/>
+                  </div>
+                </div>
+                <div className="form-group py-2">
+                  <label className="control-label">Task Type</label>
+                  <div>
+                      <Select options={taskTypes} value={selectedEditTaskType} onChange={changeEditTaskType} />
+                  </div>
+                </div>
+                <div className="form-group py-2">
+                  <label className="control-label">XP</label>
+                  <div>
+                      <input type="text" className="form-control input-lg" name="xp" value={editTask.xp} onChange={changeEditTaskXp} />
+                  </div>
+                </div>
+                <div className="form-group py-2">
+                  <label className="control-label">Quest</label>
+                  <div>
+                      <input type="checkbox" name="is_quest" checked={editTask.is_quest} onChange={changeEditTaskIsQuest}/>
+                  </div>
+                </div>
+                <div className="form-group">
+                    <div style={{textAlign: "right"}}>
+                        <button type="submit" className="btn btn-primary">Save</button>
                     </div>
                 </div>
               </form>

@@ -1,3 +1,3 @@
 # TODO
 
-- Add option to edit task.
+- Filter tasks for quests by the "is_quest" field.
