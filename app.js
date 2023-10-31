@@ -107,7 +107,9 @@ const openai2 = new OpenAI2({
 
 const chain = loadQARefineChain(openai);
 
-const embeddings = new OpenAIEmbeddings();
+const embeddings = new OpenAIEmbeddings({
+  azureOpenAIApiKey: secretConfig.OPENAI_API_KEY,
+});
 
 function toLocaleISOString(date) {
   function pad(number) {
