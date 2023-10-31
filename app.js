@@ -15,6 +15,7 @@ var { MemoryVectorStore } = require("langchain/vectorstores/memory");
 var { OpenAIEmbeddings } = require("langchain/embeddings/openai");
 var fs = require('fs');
 const AWS = require('aws-sdk');
+var session = require('express-session');
 
 var app = express();
 
@@ -28,6 +29,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+
+app.use(session({
+  secret: secretConfig.SESSION_KEY,
+  resave: false,
+  saveUninitialized: true
+}));
 
 var con;
 var con2;
@@ -119,6 +126,11 @@ function toLocaleISOString(date) {
 }
 
 app.get("/api/goals", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var sql = "SELECT * FROM goals";
   con.query(sql, function(err, result) {
     if (err) {
@@ -130,6 +142,11 @@ app.get("/api/goals", (req, res) => {
 });
 
 app.get("/api/tasks/:goal_id", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var goal_id = req.params.goal_id;
   var sql = "SELECT * FROM tasks WHERE goal_id = ?";
   con.query(sql, [goal_id], function(err, result) {
@@ -142,6 +159,11 @@ app.get("/api/tasks/:goal_id", (req, res) => {
 });
 
 app.get("/api/actions", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var dt = req.query.dt;
   var sql = "SELECT * FROM user_actions WHERE DATE(completed_at) = ?";
   con.query(sql, [dt], function(err, result) {
@@ -154,6 +176,11 @@ app.get("/api/actions", (req, res) => {
 });
 
 app.get("/api/inventory", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var sql = "SELECT * FROM inventory";
   con.query(sql, function(err, result) {
     if (err) {
@@ -165,6 +192,11 @@ app.get("/api/inventory", (req, res) => {
 });
 
 app.get("/api/skills", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var sql = "SELECT * FROM skills";
   con.query(sql, function(err, result) {
     if (err) {
@@ -176,6 +208,11 @@ app.get("/api/skills", (req, res) => {
 });
 
 app.get("/api/data", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var sql = "SELECT * FROM data";
   con.query(sql, function(err, result) {
     if (err) {
@@ -187,6 +224,11 @@ app.get("/api/data", (req, res) => {
 });
 
 app.post("/api/add-data-entry", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var description = req.body.description;
   var qtt_desc = req.body.qtt_desc;
 
@@ -201,6 +243,11 @@ app.post("/api/add-data-entry", (req, res) => {
 });
 
 app.post("/api/delete-data-entry", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var id = req.body.id;
 
   var sql = "DELETE FROM data WHERE id = ?";
@@ -214,6 +261,11 @@ app.post("/api/delete-data-entry", (req, res) => {
 });
 
 app.post("/api/add-task", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var description = req.body.description;
   var type = req.body.type;
   var goal_id = req.body.goal_id;
@@ -230,12 +282,22 @@ app.post("/api/add-task", (req, res) => {
 });
 
 app.get("/api/get-audio", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var id = req.query.id;
 
   res.sendFile(path.resolve(__dirname) + "/speech/"+id+".mp3");
 });
 
 app.get("/api/text-to-speech", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var id = req.query.id;
 
   if (fs.existsSync("speech/"+id+".mp3")) {
@@ -279,6 +341,11 @@ app.get("/api/text-to-speech", (req, res) => {
 });
 
 app.post("/api/delete-task", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var task_id = req.body.task_id;
 
   var sql = "DELETE FROM tasks WHERE id = ?";
@@ -292,6 +359,11 @@ app.post("/api/delete-task", (req, res) => {
 });
 
 app.post("/api/add-goal", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var description = req.body.description;
   var priority = req.body.priority;
 
@@ -306,6 +378,11 @@ app.post("/api/add-goal", (req, res) => {
 });
 
 app.post("/api/delete-goal", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var id = req.body.id;
 
   var sql = "DELETE FROM goals WHERE id = ?";
@@ -319,6 +396,11 @@ app.post("/api/delete-goal", (req, res) => {
 });
 
 app.post("/api/add-action", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var task_id = req.body.task_id;
   var action = req.body.action;
   var report = req.body.report;
@@ -338,6 +420,11 @@ app.post("/api/add-action", (req, res) => {
 });
 
 app.post("/api/delete-action", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var id = req.body.id;
 
   var sql = "DELETE FROM user_actions WHERE id = ?";
@@ -351,6 +438,11 @@ app.post("/api/delete-action", (req, res) => {
 });
 
 app.post("/api/add-skill", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var skill_name = req.body.skill_name;
   var skill_percentage = req.body.skill_percentage;
 
@@ -365,6 +457,11 @@ app.post("/api/add-skill", (req, res) => {
 });
 
 app.post("/api/delete-skill", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var id = req.body.id;
 
   var sql = "DELETE FROM skills WHERE id = ?";
@@ -378,6 +475,11 @@ app.post("/api/delete-skill", (req, res) => {
 });
 
 app.post("/api/add-item", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var item_name = req.body.item_name;
   var description = req.body.description;
   var qtt = req.body.qtt;
@@ -393,6 +495,11 @@ app.post("/api/add-item", (req, res) => {
 });
 
 app.post("/api/delete-item", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var id = req.body.id;
 
   var sql = "DELETE FROM inventory WHERE id = ?";
@@ -406,6 +513,11 @@ app.post("/api/delete-item", (req, res) => {
 });
 
 app.post("/api/edit-skill", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var id = req.body.id;
   var skill_name = req.body.skill_name;
   var skill_percentage = req.body.skill_percentage;
@@ -421,6 +533,11 @@ app.post("/api/edit-skill", (req, res) => {
 });
 
 app.post("/api/edit-item", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var id = req.body.id;
   var item_name = req.body.item_name;
   var description = req.body.description;
@@ -437,6 +554,11 @@ app.post("/api/edit-item", (req, res) => {
 });
 
 app.get("/api/get-stats", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var sql1 = "SELECT SUM(xp * qtt) AS xp FROM user_actions";
   try {
     var [rows1, fields1] = await con2.query(sql1);
@@ -570,6 +692,11 @@ async function getChatResponse(question) {
 }
 
 app.post("/api/get-quest", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var sql = "SELECT tasks.*, goals.priority FROM tasks INNER JOIN goals ON tasks.goal_id = goals.id";
   var [rows, fields] = await con2.query(sql);
 
@@ -590,6 +717,11 @@ app.post("/api/get-quest", async (req, res) => {
 });
 
 app.post("/api/get-report-feedback", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var action = req.body.action;
   var report = req.body.report;
   var feedback = await getReportFeeedback(action, report);
@@ -601,6 +733,11 @@ app.post("/api/get-report-feedback", async (req, res) => {
 });
 
 app.post("/api/get-chat-response", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
   var chat_input = req.body.chat_input;
 
   var sql = "INSERT INTO posts (body, role) VALUES (?, 'user')";
@@ -612,6 +749,128 @@ app.post("/api/get-chat-response", async (req, res) => {
   await con2.query(sql2, [response]);
 
   res.json({status: "OK", data: response});
+});
+
+app.post("/api/check-login", (req, res) => {
+  var user = req.body.user;
+  var pass = req.body.pass;
+
+  var sql = "SELECT * FROM logins WHERE is_valid = 0 AND created_at > (NOW() - INTERVAL 1 HOUR);";
+
+  con.query(sql, function (err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+      return;
+    }
+    if (result.length <= 5) {
+      if (user == secretConfig.USER && pass == secretConfig.PASS) {
+        req.session.isLoggedIn = true;
+        var sql2 = "INSERT INTO logins (is_valid) VALUES (1);";
+        con.query(sql2);
+        res.json({status: "OK", data: "Login successful."});
+      }
+      else {
+        var sql2 = "INSERT INTO logins (is_valid) VALUES (0);";
+        con.query(sql2);
+        res.json({status: "NOK", error: "Wrong username/password."});
+      }
+    }
+    else {
+      res.json({status: "NOK", error: "Too many login attempts."});
+    }
+  });
+});
+
+app.get("/", function(req, res) {
+  res.redirect("/home");
+});
+
+app.use(express.static(path.resolve(__dirname) + '/frontend/build'));
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+});
+
+app.get('/home', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/chat', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/goals', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/tasks', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/actions', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/skills', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/inventory', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/stats', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/data', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
 });
 
 // catch 404 and forward to error handler

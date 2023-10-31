@@ -10,12 +10,14 @@ import Inventory from './components/Inventory';
 import Stats from './components/Stats';
 import Data from './components/Data';
 import Chat from './components/Chat';
+import Login from './components/Login';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/goals" element={<Goals />} />
