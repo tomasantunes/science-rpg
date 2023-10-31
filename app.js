@@ -97,6 +97,7 @@ AWS.config.region = "eu-north-1";
 const Polly = new AWS.Polly();
 
 const openai = new OpenAI({
+  openAIApiKey: secretConfig.OPENAI_API_KEY,
   temperature: 0
 });
 
