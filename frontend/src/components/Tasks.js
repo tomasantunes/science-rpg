@@ -84,7 +84,7 @@ export default function Tasks() {
     axios.post(config.BASE_URL + "/api/add-task", newTask)
     .then((response) => {
       setNewTask({
-        goal_id: null,
+        goal_id: selectedGoal.value,
         description: "",
         type: "",
         xp: ""
