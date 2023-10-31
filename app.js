@@ -724,7 +724,7 @@ app.post("/api/get-quest", async (req, res) => {
     return;
   }
 
-  var sql = "SELECT tasks.*, goals.priority FROM tasks INNER JOIN goals ON tasks.goal_id = goals.id";
+  var sql = "SELECT tasks.*, goals.priority FROM tasks INNER JOIN goals ON tasks.goal_id = goals.id WHERE tasks.is_quest = 1";
   var [rows, fields] = await con2.query(sql);
 
   var tasks = [];
