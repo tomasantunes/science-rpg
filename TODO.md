@@ -1,3 +1,3 @@
 # TODO
 
-- Clear inputs after adding goal
+- Clear inputs after inserting
