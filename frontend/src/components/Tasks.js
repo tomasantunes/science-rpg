@@ -89,6 +89,7 @@ export default function Tasks() {
         type: "",
         xp: ""
       });
+      setSelectedTaskType(null);
       loadTasks(selectedGoal.value);
     })
     .catch((err) => {
