@@ -19,7 +19,8 @@ export default function Tasks() {
     goal_id: null,
     description: "",
     type: "",
-    xp: ""
+    xp: "",
+    is_quest: true
   });
   const [newAction, setNewAction] = useState({
     task_id: null,
@@ -87,7 +88,8 @@ export default function Tasks() {
         goal_id: selectedGoal.value,
         description: "",
         type: "",
-        xp: ""
+        xp: "",
+        is_quest: true
       });
       setSelectedTaskType({});
       loadTasks(selectedGoal.value);
@@ -198,6 +200,7 @@ export default function Tasks() {
                     <th>Task</th>
                     <th>Type</th>
                     <th>XP</th>
+                    <th>Quest</th>
                     <th>Complete</th>
                     <th>Options</th>
                 </tr>
@@ -208,6 +211,7 @@ export default function Tasks() {
                   <td>{task.description}</td>
                   <td>{task.type}</td>
                   <td>{task.xp}</td>
+                  <td>{task.is_quest == 1 ? "Yes" : "No"}</td>
                   <td></td>
                   <td>
                     <div class="dropdown">
@@ -233,6 +237,9 @@ export default function Tasks() {
                 </td>
                 <td>
                   <input type="text" className="form-control" value={newTask.xp} onChange={changeNewTaskXp} placeholder="Set the XP" />
+                </td>
+                <td>
+                  <input type="checkbox" checked={newTask.is_quest} onChange={(e) => { setNewTask({...newTask, is_quest: e.target.checked}) }} />
                 </td>
                 <td></td>
                 <td>

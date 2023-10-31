@@ -273,9 +273,10 @@ app.post("/api/add-task", (req, res) => {
   var type = req.body.type;
   var goal_id = req.body.goal_id;
   var xp = req.body.xp;
+  var is_quest = req.body.is_quest == true ? 1 : 0;
 
-  var sql = "INSERT INTO tasks (description, type, goal_id, xp) VALUES (?, ?, ?, ?)";
-  con.query(sql, [description, type, goal_id, xp], function(err, result) {
+  var sql = "INSERT INTO tasks (description, type, goal_id, xp, is_quest) VALUES (?, ?, ?, ?, ?)";
+  con.query(sql, [description, type, goal_id, xp, is_quest], function(err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: err.message});
