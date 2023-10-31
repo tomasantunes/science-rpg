@@ -89,7 +89,7 @@ export default function Tasks() {
         type: "",
         xp: ""
       });
-      setSelectedTaskType(null);
+      setSelectedTaskType({});
       loadTasks(selectedGoal.value);
     })
     .catch((err) => {
