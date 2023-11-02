@@ -593,12 +593,14 @@ app.get("/api/get-stats", async (req, res) => {
 
     var level = 0;
     var level_xp = 0;
+    var next_level_xp = 0;
     for (var i = 0; i <= 10000; i++) {
       level_xp += i * 1000;
       if (xp >= level_xp) {
         level++;
       }
       else {
+        next_level_xp = level_xp;
         break;
       }
     }
@@ -627,6 +629,7 @@ app.get("/api/get-stats", async (req, res) => {
     var data = {
       xp: xp,
       level: level,
+      next_level_xp: next_level_xp,
       nr_skills: nr_skills,
       nr_goals_completed: nr_goals_completed,
       nr_items: nr_items
