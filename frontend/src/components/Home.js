@@ -8,6 +8,7 @@ window.jQuery = $;
 window.$ = $;
 global.jQuery = $;
 window.bootstrap = require('bootstrap');
+var bootprompt = require('bootprompt');
 
 export default function Home() {
   const [quest, setQuest] = useState({
@@ -111,6 +112,7 @@ export default function Home() {
       });
       setShowQuestResponse(true);
       setLoading(false);
+      bootprompt.alert("You have won " + newAction.xp + " XP.");
     })
     .catch((err) => {
       console.log(err);

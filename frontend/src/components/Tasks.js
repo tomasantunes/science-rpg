@@ -9,6 +9,7 @@ window.jQuery = $;
 window.$ = $;
 global.jQuery = $;
 window.bootstrap = require('bootstrap');
+var bootprompt = require('bootprompt');
 
 export default function Tasks() {
   const [goals, setGoals] = useState([]);
@@ -123,6 +124,7 @@ export default function Tasks() {
 
   function submitAddAction(e) {
     e.preventDefault();
+    var xp_won = (Number(newAction.xp) * Number(newAction.qtt)).toString();
     axios.post(config.BASE_URL + "/api/add-action", newAction)
     .then((response) => {
       loadTasks(selectedGoal.value);
@@ -135,7 +137,7 @@ export default function Tasks() {
         completes_task: false
       });
       closeAddAction();
-      alert("Action added.");
+      bootprompt.alert("You have won " + xp_won + " XP.");
     })
     .catch((err) => {
       console.log(err);
@@ -297,26 +299,28 @@ export default function Tasks() {
                 </tr>
               ))}
             </tbody>
-            <tfoot>
-              <tr>
-                <td>
-                  <input type="text" className="form-control" value={newTask.description} onChange={changeNewTaskDescription} placeholder="Add a new task" />
-                </td>
-                <td>
-                  <Select options={taskTypes} value={selectedTaskType} onChange={changeSelectedTaskType} />
-                </td>
-                <td>
-                  <input type="text" className="form-control" value={newTask.xp} onChange={changeNewTaskXp} placeholder="Set the XP" />
-                </td>
-                <td>
-                  <input type="checkbox" checked={newTask.is_quest} onChange={(e) => { setNewTask({...newTask, is_quest: e.target.checked}) }} />
-                </td>
-                <td></td>
-                <td>
-                  <button className="btn btn-success" onClick={addTask}>Add</button>
-                </td>
-              </tr>
-            </tfoot>
+            {typeof selectedGoal != "undefined" && 
+              <tfoot>
+                <tr>
+                  <td>
+                    <input type="text" className="form-control" value={newTask.description} onChange={changeNewTaskDescription} placeholder="Add a new task" />
+                  </td>
+                  <td>
+                    <Select options={taskTypes} value={selectedTaskType} onChange={changeSelectedTaskType} />
+                  </td>
+                  <td>
+                    <input type="text" className="form-control" value={newTask.xp} onChange={changeNewTaskXp} placeholder="Set the XP" />
+                  </td>
+                  <td>
+                    <input type="checkbox" checked={newTask.is_quest} onChange={(e) => { setNewTask({...newTask, is_quest: e.target.checked}) }} />
+                  </td>
+                  <td></td>
+                  <td>
+                    <button className="btn btn-success" onClick={addTask}>Add</button>
+                  </td>
+                </tr>
+              </tfoot>
+            }
           </table>
         </div>
       </div>
