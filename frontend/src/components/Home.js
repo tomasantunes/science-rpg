@@ -38,21 +38,28 @@ export default function Home() {
     axios.post(config.BASE_URL + "/api/get-quest")
     .then((response) => {
       setLoading(false);
-      setQuest({
-        text: response.data.data.quest,
-        id: response.data.data.post_id
-      });
-      setNewAction({
-        ...newAction,
-        task_id: response.data.data.task_id,
-        xp: response.data.data.xp
-      })
-      setTaskDescription(response.data.data.task_description)
-      setShowQuest(true);
-      setShowReport(true);
+      if (response.data.status == "OK") {
+        setQuest({
+          text: response.data.data.quest,
+          id: response.data.data.post_id
+        });
+        setNewAction({
+          ...newAction,
+          task_id: response.data.data.task_id,
+          xp: response.data.data.xp
+        })
+        setTaskDescription(response.data.data.task_description)
+        setShowQuest(true);
+        setShowReport(true);
+      }
+      else {
+        alert(response.data.error);
+      }
     })
     .catch((err) => {
+      setLoading(false);
       console.log(err);
+      alert(err.message);
     });
   }
 
@@ -119,6 +126,10 @@ export default function Home() {
     });
   }
 
+  function reload() {
+    window.location.reload();
+  }
+
   useEffect(() => {
     if(audioSource != "" && audioRef.current) {
       audioRef.current.pause();
@@ -134,7 +145,7 @@ export default function Home() {
         <div className="container">
           <h2>Home</h2>
           <div style={{textAlign: "center"}}>
-            <button className="btn btn-primary" onClick={loadQuest}>Start</button>
+            <button className="btn btn-primary btn-lg" onClick={loadQuest}>Start</button>
           </div>
           {showQuest &&
             <div className="quest">
@@ -167,12 +178,17 @@ export default function Home() {
             </div>
           }
           {showQuestResponse &&
-            <div className="quest-response">
-              <div style={{textAlign: "right"}}>
-                <button className="btn btn-primary btn-sm" onClick={(e) => listen(questResponse.id)}>Listen</button>
+            <>
+              <div className="quest-response mb-2">
+                <div style={{textAlign: "right"}}>
+                  <button className="btn btn-primary btn-sm" onClick={(e) => listen(questResponse.id)}>Listen</button>
+                </div>
+                {questResponse.text}
               </div>
-              {questResponse.text}
-            </div>
+              <div style={{textAlign: "center"}}>
+                <button className="btn btn-primary btn-lg" onClick={reload}>Reload</button>
+              </div>
+            </>
           }
         </div>
         {loading &&

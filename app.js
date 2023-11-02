@@ -730,6 +730,11 @@ app.post("/api/get-quest", async (req, res) => {
   var sql = "SELECT tasks.*, goals.priority FROM tasks INNER JOIN goals ON tasks.goal_id = goals.id WHERE tasks.is_quest = 1";
   var [rows, fields] = await con2.query(sql);
 
+  if (rows.length < 1) {
+    res.json({status: "NOK", error: "No quests available."});
+    return;
+  } 
+
   var tasks = [];
   for (var i in rows) {
     for (var j = 0; j < rows[i].priority; j++) {
