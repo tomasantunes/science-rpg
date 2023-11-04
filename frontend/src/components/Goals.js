@@ -41,6 +41,10 @@ export default function Goals() {
   }
 
   function addGoal() {
+    if (newGoal.description == "" || newGoal.priority == "") {
+      alert("Please fill in all fields");
+      return;
+    }
     axios.post(config.BASE_URL + "/api/add-goal", newGoal)
     .then((response) => {
       loadGoals();

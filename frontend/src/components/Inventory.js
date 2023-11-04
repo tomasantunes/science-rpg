@@ -65,6 +65,10 @@ export default function Goals() {
 
   function submitAddItem(e) {
     e.preventDefault();
+    if (newItem.item_name == "" || newItem.description == "" || newItem.qtt == "") {
+      alert("Please fill in all fields");
+      return;
+    }
     axios.post(config.BASE_URL + "/api/add-item", newItem)
     .then((response) => {
       setNewItem({

@@ -38,6 +38,10 @@ export default function Skills() {
   }
 
   function addSkill() {
+    if (newSkill.skill_name == "") {
+      alert("Please fill in the skill name.");
+      return;
+    }
     axios.post(config.BASE_URL + "/api/add-skill", newSkill)
     .then((response) => {
       setNewSkill({

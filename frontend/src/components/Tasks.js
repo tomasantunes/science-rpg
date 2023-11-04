@@ -91,6 +91,10 @@ export default function Tasks() {
   }
 
   function addTask() {
+    if (newTask.description == "" || newTask.type == "" || newTask.xp == "") {
+      alert("Please fill in all fields");
+      return;
+    }
     axios.post(config.BASE_URL + "/api/add-task", newTask)
     .then((response) => {
       setNewTask({

@@ -41,6 +41,10 @@ export default function Data() {
   }
 
   function addDataEntry() {
+    if (newDataEntry.description == "" || newDataEntry.qtt_desc == "") {
+      alert("Please fill in all fields");
+      return;
+    }
     axios.post(config.BASE_URL + "/api/add-data-entry", newDataEntry)
     .then((response) => {
       setNewDataEntry({
