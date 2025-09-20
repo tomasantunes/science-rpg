@@ -8,11 +8,13 @@ var mysql = require('mysql2');
 var mysql2 = require('mysql2/promise');
 var secretConfig = require('./secret-config.json');
 var OpenAI2 = require('openai');
-var { OpenAI } = require("langchain/llms/openai");
+/*
+var { OpenAI } = require("langchain");
 var { loadQARefineChain } = require("langchain/chains");
 var { TextLoader } = require("langchain/document_loaders/fs/text");
 var { MemoryVectorStore } = require("langchain/vectorstores/memory");
 var { OpenAIEmbeddings } = require("langchain/embeddings/openai");
+*/
 var fs = require('fs');
 const AWS = require('aws-sdk');
 var session = require('express-session');
@@ -96,13 +98,14 @@ AWS.config.region = "eu-north-1";
 
 const Polly = new AWS.Polly();
 
+const openai2 = new OpenAI2({
+  apiKey: secretConfig.OPENAI_API_KEY
+});
+
+/*
 const openai = new OpenAI({
   openAIApiKey: secretConfig.OPENAI_API_KEY,
   temperature: 0
-});
-
-const openai2 = new OpenAI2({
-  apiKey: secretConfig.OPENAI_API_KEY
 });
 
 const chain = loadQARefineChain(openai);
@@ -110,6 +113,7 @@ const chain = loadQARefineChain(openai);
 const embeddings = new OpenAIEmbeddings({
   openAIApiKey: secretConfig.OPENAI_API_KEY,
 });
+*/
 
 function toLocaleISOString(date) {
   function pad(number) {
@@ -702,6 +706,7 @@ async function getAllDataJSON() {
 
 }
 
+/*
 async function getChatResponse(question) {
   var data = await getAllDataJSON();
   var filename = path.join(__dirname, 'exported_data', 'data.json')
@@ -720,6 +725,7 @@ async function getChatResponse(question) {
 
   return res.output_text;
 }
+*/
 
 app.post("/api/get-quest", async (req, res) => {
   if (!req.session.isLoggedIn) {
@@ -767,6 +773,7 @@ app.post("/api/get-report-feedback", async (req, res) => {
   res.json({status: "OK", data: {feedback: feedback, post_id: insert[0].insertId}});
 });
 
+/*
 app.post("/api/get-chat-response", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
@@ -785,6 +792,7 @@ app.post("/api/get-chat-response", async (req, res) => {
 
   res.json({status: "OK", data: response});
 });
+*/
 
 app.post("/api/check-login", (req, res) => {
   var user = req.body.user;
@@ -821,33 +829,35 @@ app.get("/", function(req, res) {
   res.redirect("/home");
 });
 
-app.use(express.static(path.resolve(__dirname) + '/frontend/build'));
+app.use(express.static(path.resolve(__dirname) + '/frontend/dist'));
 
 app.get('/login', (req, res) => {
-  res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
 });
 
 app.get('/home', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
   }
 });
 
+/*
 app.get('/chat', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
   }
 });
+*/
 
 app.get('/goals', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
@@ -856,7 +866,7 @@ app.get('/goals', (req, res) => {
 
 app.get('/tasks', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
@@ -865,7 +875,7 @@ app.get('/tasks', (req, res) => {
 
 app.get('/actions', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
@@ -874,7 +884,7 @@ app.get('/actions', (req, res) => {
 
 app.get('/skills', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
@@ -883,7 +893,7 @@ app.get('/skills', (req, res) => {
 
 app.get('/inventory', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
@@ -892,7 +902,7 @@ app.get('/inventory', (req, res) => {
 
 app.get('/stats', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
@@ -901,7 +911,7 @@ app.get('/stats', (req, res) => {
 
 app.get('/data', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
