@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var {getMySQLConnections} = require("../libs/database");
+var secretConfig = require("../secret-config");
+var axios = require("axios");
 
 var {con, con2} = getMySQLConnections();
 
@@ -76,6 +78,36 @@ router.post("/api/delete-item", (req, res) => {
       res.json({status: "NOK", error: err.message})
     }
     res.json({status: "OK", data: "Item deleted"});
+  });
+});
+
+router.post("/api/export-inventory-to-pfc3", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT item_name, description, qtt FROM inventory";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+      return;
+    }
+
+    axios.post(secretConfig.PFC3_URL + "/external/upsert-inventory", {
+      api_key: secretConfig.PFC3_API_KEY,
+      inventory: result
+    }).then(response => {
+      if (response.data.status === "NOK") {
+        res.json({status: "NOK", error: response.data.error});
+        return;
+      }
+      res.json({status: "OK", data: "Inventory exported to PFC3."});
+    }).catch(error => {
+      console.log(error);
+      res.json({status: "NOK", error: error.message});
+    });
   });
 });
 

@@ -2,6 +2,10 @@ import React, {useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import config from '../config';
 import axios from 'axios';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+const MySwal = withReactContent(Swal)
 
 export default function Goals() {
   const [items, setItems] = useState([]);
@@ -137,6 +141,21 @@ export default function Goals() {
     });
   }
 
+  function exportInventoryToPfc3() {
+    axios.post(config.BASE_URL + "/api/export-inventory-to-pfc3")
+    .then((response) => {
+      if (response.data.status === "OK") {
+        MySwal.fire("Inventory exported to PFC3.");
+      } else {
+        MySwal.fire("Error: " + response.data.error);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      MySwal.fire("Error: " + err.message);
+    });
+  }
+
   useEffect(() => {
     loadItems();
   }, [])
@@ -146,6 +165,9 @@ export default function Goals() {
       <div className="page">
         <div className="medium-container">
           <h2>Items</h2>
+          <div className="text-end mb-2">
+            <button className="btn btn-primary" onClick={exportInventoryToPfc3}>Export to PFC3</button>
+          </div>
           <table className="table table-striped table-bordered align-middle tasks">
             <thead class="table-dark">
                 <tr>
